@@ -1,0 +1,100 @@
+Given two integer arrays nums1 and nums2, return an array of their intersection. Each element in the result must be unique and you may return the result in any order.
+
+ 
+
+Example 1:
+
+Input: nums1 = [1,2,2,1], nums2 = [2,2]
+Output: [2]
+Example 2:
+
+Input: nums1 = [4,9,5], nums2 = [9,4,9,8,4]
+Output: [9,4]
+Explanation: [4,9] is also accepted.
+ 
+
+Constraints:
+
+1 <= nums1.length, nums2.length <= 1000
+0 <= nums1[i], nums2[i] <= 1000
+
+//note：由于这道题的两个array不是有序的，所以我们先把它们变成有序的(asending)，然后再用两个pointer去进行一个一个遍历比较。
+
+//Solution:
+
+class Solution {
+    public int[] intersection(int[] nums1, int[] nums2) {
+        if (nums1.length == 0 || nums2.length ==0) {
+            return nums1;
+        }   
+        Arrays.sort(nums1);  //mlogm
+        Arrays.sort(nums2);  //nlogn
+        Set<Integer> set = new HashSet<>();
+        int i = 0;
+        int j = 0;
+
+        while (i < nums1.length && j < nums2.length) {
+            if (nums1[i] < nums2[j]) {
+                i++;
+            } else if (nums1[i] > nums2[j]) {
+                j++;
+            } else {
+                set.add(nums1[i]);
+                i++;
+                j++;
+            }
+        }
+
+        return setToIntArray(set);
+    }
+
+    private int[] setToIntArray(Set<Integer> set) {
+        int[] result = new int[set.size()];
+        int i = 0;
+        for (int I : set) {
+            result[i++] = I;
+        }
+        return result;
+    }
+}
+//TC: O(mlogm + nlongn) m is length of nums1, n is length of nums2
+//SC: O(min(m,n))
+
+//Solution 2:
+
+class Solution {
+    public int[] intersection(int[] nums1, int[] nums2) {
+        if (nums1 == null || nums1.length == 0 || nums2 == null || nums2.length == 0) {
+            return new int[0];
+        }
+        Set<Integer> set1 = new HashSet<>();
+        Set<Integer> resSet = new HashSet<>();
+        //遍历数组1
+        for (int i : nums1) {
+            set1.add(i);
+        }
+        //遍历数组2的过程中判断哈希表中是否存在该元素
+        for (int i : nums2) {
+            if (set1.contains(i)) {
+                resSet.add(i);
+            }
+        }
+      
+        //方法1：将结果集合转为数组
+        //return resSet.stream().mapToInt(x -> x).toArray();
+        
+        //方法2：另外申请一个数组存放setRes中的元素,最后返回数组
+        int[] arr = new int[resSet.size()];
+        int j = 0;
+        for(int i : resSet){
+            arr[j++] = i;
+        }
+        
+        return arr;
+    }
+}
+
+//TC: O(m + n) m is m is length of nums1, n is length of nums2
+//SC: O(n) explain: set1 的空间复杂度为 O(n)，其中 n 是 nums1 的长度。
+              //    resSet 的空间复杂度最多也为 O(n)，因为它包含的元素都来自 nums1。
+               //   额外的整数数组 arr 的空间复杂度为 O(k)，其中 k 是交集的大小。在最坏的情况下，这也可能是 O(n)。
