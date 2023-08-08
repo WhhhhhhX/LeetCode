@@ -1,0 +1,99 @@
+Given two strings s and t, return true if t is an anagram of s, and false otherwise.
+
+An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.
+
+ 
+
+Example 1:
+
+Input: s = "anagram", t = "nagaram"
+Output: true
+Example 2:
+
+Input: s = "rat", t = "car"
+Output: false
+ 
+
+Constraints:
+
+1 <= s.length, t.length <= 5 * 104
+s and t consist of lowercase English letters.
+
+//Solution 1:
+
+class Solution {
+    public boolean isAnagram(String s, String t) {
+        if (s == null || t == null) {
+            return false;
+        }
+        if (s.isEmpty() && t.isEmpty()) {
+            return true;
+        }
+        if (s.length() > t.length()) {
+            Map<Character, Integer> map = BuiltMap(t);
+            return isOrNot(s, map);
+        } else {
+            Map<Character, Integer> map = BuiltMap(s);
+            return isOrNot(t, map);
+        }
+
+        
+    }
+
+    private boolean isOrNot(String t, Map<Character, Integer> map) {
+        char[] array = t.toCharArray();
+        for (int i = 0; i < array.length; i++) {
+            if (!map.containsKey(array[i])) {
+                return false;
+            } else {
+                map.put(array[i], map.get(array[i]) - 1);
+                if (map.get(array[i]) == 0) {
+                    map.remove((array[i]), 0);
+                }
+            }
+        }
+        return true;
+    }
+
+    private Map<Character, Integer> BuiltMap(String s) {
+        Map<Character, Integer> map = new HashMap<>();
+        int i = 0;
+        while (i < s.length()) {
+           
+            if (!map.containsKey(s.charAt(i))) {
+                map.put(s.charAt(i), 1);
+            } else {
+                map.put(s.charAt(i), map.get(s.charAt(i)) + 1);
+            }
+            i++;
+        }
+        return map;
+    }
+}
+//TC: O(n)
+//SC: O(n)
+
+//Solution 2:  Recommend!!!
+
+class Solution {
+    public boolean isAnagram(String s, String t) {
+        int[] record = new int[26];
+
+        for (int i = 0; i < s.length(); i++) {
+            record[s.charAt(i) - 'a']++;     // 并不需要记住字符a的ASCII，只要求出一个相对数值就可以了
+        }
+
+        for (int i = 0; i < t.length(); i++) {
+            record[t.charAt(i) - 'a']--;
+        }
+        
+        for (int count: record) {
+            if (count != 0) {               // record数组如果有的元素不为零0，说明字符串s和t 一定是谁多了字符或者谁少了字符。
+                return false;
+            }
+        }
+        return true;                        // record数组所有元素都为零0，说明字符串s和t是字母异位词
+    }
+}
+//TC: O(m + n)  m is length of s, n is length of t
+//SC: O(1)
