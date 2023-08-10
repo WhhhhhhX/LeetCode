@@ -1,0 +1,65 @@
+Given two strings ransomNote and magazine, return true if ransomNote can be constructed by using the letters from magazine and false otherwise.
+
+Each letter in magazine can only be used once in ransomNote.
+
+ 
+
+Example 1:
+
+Input: ransomNote = "a", magazine = "b"
+Output: false
+Example 2:
+
+Input: ransomNote = "aa", magazine = "ab"
+Output: false
+Example 3:
+
+Input: ransomNote = "aa", magazine = "aab"
+Output: true
+ 
+
+Constraints:
+
+1 <= ransomNote.length, magazine.length <= 105
+ransomNote and magazine consist of lowercase English letters.
+
+//思路：
+//题目说了检查magazine的所含字母是否能构成ransomnote整个字符串，然后每个letter只能用一次，很明显要用hashtable。
+
+
+
+//Solution :
+class Solution {
+    public boolean canConstruct(String ransomNote, String magazine) {
+        if (ransomNote == null || ransomNote.isEmpty() || magazine == null || magazine.isEmpty()) {
+            return false;
+        }
+        if (ransomNote.length() > magazine.length()) {
+            return false;
+        }
+        Map<Character, Integer> map = builtMap(magazine);
+        char[] array = ransomNote.toCharArray(); 
+        for (int i = 0; i < array.length; i++) {
+            if (!map.containsKey(array[i])) {
+                return false;
+            }
+            map.put(array[i], map.get(array[i]) - 1);  //记得如果map里包含这个字母，要对其数量进行-1
+            if (map.get(array[i]) == 0) {  //一定要if判断是否数量减为0，一旦减为0，就需要将这个key进行remove。
+                map.remove(array[i]);
+            }
+        }
+        return true;
+    }
+
+    private Map<Character, Integer> builtMap(String s) {
+        Map<Character, Integer> map = new HashMap<>();
+        char[] array = s.toCharArray();
+        for (char c : array) {
+            map.put(c, map.getOrDefault(c,0) + 1);
+        }
+        return map;
+    }
+}
+
+//TC: O(n)  n is length of ransomNote.
+//SC: O(m)  m is length of magazine.
