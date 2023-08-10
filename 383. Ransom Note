@@ -61,5 +61,5 @@ class Solution {
     }
 }
 
-//TC: O(n)  n is length of ransomNote.
-//SC: O(m)  m is length of magazine.
+//TC: O(m + n)  n is length of ransomNote, m is length of magazine. 
+//SC: O(m + n)  
