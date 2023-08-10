@@ -1,0 +1,67 @@
+Given four integer arrays nums1, nums2, nums3, and nums4 all of length n, return the number of tuples (i, j, k, l) such that:
+
+0 <= i, j, k, l < n
+nums1[i] + nums2[j] + nums3[k] + nums4[l] == 0
+ 
+
+Example 1:
+
+Input: nums1 = [1,2], nums2 = [-2,-1], nums3 = [-1,2], nums4 = [0,2]
+Output: 2
+Explanation:
+The two tuples are:
+1. (0, 0, 0, 1) -> nums1[0] + nums2[0] + nums3[0] + nums4[1] = 1 + (-2) + (-1) + 2 = 0
+2. (1, 1, 0, 0) -> nums1[1] + nums2[1] + nums3[0] + nums4[0] = 2 + (-1) + (-1) + 0 = 0
+Example 2:
+
+Input: nums1 = [0], nums2 = [0], nums3 = [0], nums4 = [0]
+Output: 1
+ 
+
+Constraints:
+
+n == nums1.length
+n == nums2.length
+n == nums3.length
+n == nums4.length
+1 <= n <= 200
+-228 <= nums1[i], nums2[i], nums3[i], nums4[i] <= 228
+
+
+\\思路：
+\\这道题有4个array，那么如果把它两两进行遍历相加，得到的sum再存入map里当作key，同一个数字出现几次的次数当作value。另外两个数组再逐个遍历相加，得到的结果sum2，再用target(i.e.0) - sum2得到的剩余的数字看是否在map里contain。通过这个思路，就可以将4个array转换成两个部分，就成了2sum那道题。
+
+
+\\Solution:
+
+class Solution {
+    public int fourSumCount(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {
+        if (nums1.length == 0) {
+            return 0;
+        }
+        Map<Integer, Integer> map = new HashMap<>();
+        int result = 0;
+        for (int i = 0; i < nums1.length; i++) {
+            for (int j = 0; j < nums2.length; j++) {
+                int cur = nums1[i] + nums2[j];
+                if (!map.containsKey(cur)) {
+                    map.put(cur, 1);
+                } else {
+                    map.put(cur, map.get(cur) + 1);
+                }
+            }
+        }
+        for (int x = 0; x < nums3.length; x++) {
+            for (int z = 0; z < nums4.length; z++) {
+                int tem = 0 - (nums3[x] + nums4[z]);
+                if (map.containsKey(tem)) {
+                    result += map.get(tem);
+                }
+            }
+        }
+        return result;
+    }
+}
+
+\\TC: O(n^2)  n is length of each array
+\\SC: O(n^2)
