@@ -1,0 +1,73 @@
+Given an array nums of n integers, return an array of all the unique quadruplets [nums[a], nums[b], nums[c], nums[d]] such that:
+
+0 <= a, b, c, d < n
+a, b, c, and d are distinct.
+nums[a] + nums[b] + nums[c] + nums[d] == target
+You may return the answer in any order.
+
+ 
+
+Example 1:
+
+Input: nums = [1,0,-1,0,-2,2], target = 0
+Output: [[-2,-1,1,2],[-2,0,0,2],[-1,0,0,1]]
+Example 2:
+
+Input: nums = [2,2,2,2,2], target = 8
+Output: [[2,2,2,2]]
+
+//解题思路：
+//这道题我们可以借鉴三数之和的思路，在三数之和中，有一个固定的i，和对应的left和right，那么4数的话比三数多一个，那就再在三数之和的for循环外再加一层for循环，这样
+//每次固定两个数，然后再固定left right，再通过比较大小来移动left和right，从而解决问题。
+
+//Solution:
+class Solution {
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        List<List<Integer>> result = new ArrayList<>(); 
+        if (nums == null || nums.length == 0) {
+            return result;
+        }
+        Arrays.sort(nums);  //nlogn
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] > target && target > 0 && nums[i] > 0) {
+                break;
+            }
+            if (i > 0 && nums[i] == nums[i - 1]) {
+                continue;
+            } 
+              for (int j = i + 1; j < nums.length; j++) {
+                    if (nums[i] + nums[j] > target && nums[i] + nums[j] > 0 && target > 0) {
+                        break;
+                    }
+                    if (j > i + 1 && nums[j] == nums[j - 1]) {
+                        continue;
+                    }
+                    int left = j + 1;
+                    int right = nums.length - 1;
+                    while (left < right) {
+                        long sum = (long) nums[i] + nums[j] + nums[left] + nums[right];
+                        if (sum < target) {
+                            left++;
+                        } else if (sum > target) {
+                            right--;
+                        } else {
+                            result.add(Arrays.asList(nums[i], nums[j], nums[left], nums[right]));
+                            while (left < right && nums[left] == nums[left + 1]) {
+                                left++;
+                            } 
+                            while (left < right && nums[right] == nums[right - 1]) {
+                                right--;
+                            }
+                            left++;
+                            right--;
+                        }
+                    }
+                }
+            
+        } 
+        return result;
+    }
+}
+
+// TC: O(n^3)
+//SC: O(1)
