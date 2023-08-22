@@ -1,0 +1,60 @@
+Given the root of a binary tree, imagine yourself standing on the right side of it, return the values of the nodes you can see ordered from top to bottom.
+
+ 
+
+Example 1:
+
+
+Input: root = [1,2,3,null,5,null,4]
+Output: [1,3,4]
+
+//Note:
+//用一个queue来进行储存，便利每一行的元素，然后当index i遍历到最后当前layer的最后一个元素时，加入result。
+
+
+
+//Solution:
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public List<Integer> rightSideView(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        if (root == null) {
+            return result;
+        }
+        Deque<TreeNode> queue = new ArrayDeque<>();
+        queue.offerFirst(root);
+        while (!queue.isEmpty()) {
+            int curLevelSize = queue.size();
+        for (int i = 0; i < curLevelSize; i++) {
+            TreeNode cur = queue.pollFirst();
+            if (cur.left != null) {
+                queue.offerLast(cur.left);
+            }
+            if (cur.right != null) {
+                queue.offerLast(cur.right);
+            }
+            if (i == curLevelSize - 1) {
+                result.add(cur.val);
+            }
+
+        }
+        }
+        
+        return result;
+        
+    }
+}
