@@ -37,7 +37,7 @@ class Solution {
         }
         Deque<TreeNode> queue = new ArrayDeque<>();
         queue.offerLast(root);
-        TreeNode result = null;
+        int result = 0;
 
         while (!queue.isEmpty()) {
             int size = queue.size();
@@ -50,15 +50,16 @@ class Solution {
                     queue.offerLast(cur.right);
                 }
                 if (i == 0) {
-                    result = cur;
+                    result = cur.val;
                 }
                 
                 
             }
         }
-        return result.val;
+        return result;
     }
 }
+ 
 
 //TC: O(n)
 //SC: O(n)
