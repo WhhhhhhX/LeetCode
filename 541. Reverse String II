@@ -1,0 +1,49 @@
+Given a string s and an integer k, reverse the first k characters for every 2k characters counting from the start of the string.
+
+If there are fewer than k characters left, reverse all of them. If there are less than 2k but greater than or equal to k characters, then reverse the first k characters and leave the other as original.
+
+ 
+
+Example 1:
+
+Input: s = "abcdefg", k = 2
+Output: "bacdfeg"
+Example 2:
+
+Input: s = "abcd", k = 2
+Output: "bacd"
+
+
+//思路：
+//即然题目说每2k个元素中，反转前k个，那就for循环每次加2k。然后将分两种情况分别处理，第一是如果多于2k正常反转前k个或者少于2k但多于k，还是反转前k个，第二是少于k就反转剩余的全部。
+
+//Soltuion:
+class Solution {
+    public String reverseStr(String s, int k) {
+        if (s == null || s.length() == 0 || k == 0) {
+            return s;
+        }
+        char[] array = s.toCharArray();
+        for (int i = 0; i < array.length; i += 2 * k) {
+            if (i + k - 1 < array.length) {
+                reverse(array, i, i + k - 1);
+            } else {
+                reverse(array, i, array.length - 1);
+            }
+        }
+        return new String(array);
+    }
+
+    private void reverse(char[] array, int a, int b) {
+        while (a < b) {
+            char temp = array[a];
+            array[a] = array[b];
+            array[b] = temp;
+            a++;
+            b--;
+        }
+    }
+}
+
+//TC: O(n)
+//SC: O(n)
