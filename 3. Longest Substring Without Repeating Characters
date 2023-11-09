@@ -1,0 +1,47 @@
+Given a string s, find the length of the longest 
+substring
+ without repeating characters.
+
+ 
+
+Example 1:
+
+Input: s = "abcabcbb"
+Output: 3
+Explanation: The answer is "abc", with the length of 3.
+Example 2:
+
+Input: s = "bbbbb"
+Output: 1
+Explanation: The answer is "b", with the length of 1.
+Example 3:
+
+Input: s = "pwwkew"
+Output: 3
+Explanation: The answer is "wke", with the length of 3.
+Notice that the answer must be a substring, "pwke" is a subsequence and not a substring.
+
+//用sliding window(set)去找最长的substring，并每次用fast - slow去更新result。当 fast 指针指向的字符已经在 Set 中时，这意味着找到了一个重复字符，我们需要收缩窗口，直到重复的字符被移除。
+
+//Solution:
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+        Set<Character> set = new HashSet<>();
+        int result = 0;
+        int fast = 0;
+        int slow = 0;
+
+        while (fast < s.length()) {
+            if (!set.contains(s.charAt(fast))) {
+                set.add(s.charAt(fast++));
+                result = Math.max(result, fast - slow);
+            } else {
+                set.remove(s.charAt(slow++));
+            }
+        }
+        return result;
+    }
+}
