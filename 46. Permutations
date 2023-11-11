@@ -1,0 +1,40 @@
+Given an array nums of distinct integers, return all the possible permutations. You can return the answer in any order.
+
+ 
+
+Example 1:
+
+Input: nums = [1,2,3]
+
+//Solution: DFS
+class Solution {
+    public List<List<Integer>> permute(int[] nums) {
+        List<List<Integer>> result = new ArrayList<>();
+
+        helper(result, nums, 0);
+        return result;
+    }
+
+    private void helper(List<List<Integer>> result, int[] nums, int index) {
+        //base case
+        if (index == nums.length) {
+            List<Integer> cur = new ArrayList<>();
+            for (int num : nums) cur.add(num);
+            result.add(cur);
+            return;
+        }
+
+        for (int i = index; i < nums.length; i++) {
+            swap(nums, i, index);
+            helper(result, nums, index + 1);
+            swap(nums, i, index);
+            
+        }
+    }
+
+    private void swap(int[] arr, int a, int b) {
+        int tem = arr[a];
+        arr[a] = arr[b];
+        arr[b] = tem;
+    }
+}
