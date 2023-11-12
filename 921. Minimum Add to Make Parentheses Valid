@@ -1,0 +1,68 @@
+A parentheses string is valid if and only if:
+
+It is the empty string,
+It can be written as AB (A concatenated with B), where A and B are valid strings, or
+It can be written as (A), where A is a valid string.
+You are given a parentheses string s. In one move, you can insert a parenthesis at any position of the string.
+
+For example, if s = "()))", you can insert an opening parenthesis to be "(()))" or a closing parenthesis to be "())))".
+Return the minimum number of moves required to make s valid.
+
+ 
+
+Example 1:
+
+Input: s = "())"
+Output: 1
+Example 2:
+
+Input: s = "((("
+Output: 3
+
+//Solution 1: use stack
+class Solution {
+    public int minAddToMakeValid(String s) {
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+        Deque<Character> stack = new ArrayDeque<>();
+        int res = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '(') {
+                stack.offerFirst(s.charAt(i));
+            } else {
+                if (stack.isEmpty()) {
+                    res++;
+                } else {
+                    stack.pollFirst();
+                }
+            }
+        }
+        return res + stack.size();
+    }
+}
+
+//Solution 2: 2 variable , running time 更短，空间复杂度也小
+class Solution {
+    public int minAddToMakeValid(String s) {
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+        int leftParanthesisNum = 0;
+        int leftNeededAdded = 0;
+
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == '(') {
+                leftParanthesisNum++;
+            } else {
+                if (leftParanthesisNum > 0) {
+                    leftParanthesisNum--;
+                } else {
+                    leftNeededAdded++;
+                }
+            }
+        }
+        return leftNeededAdded + leftParanthesisNum;
+    }
+} 
