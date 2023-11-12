@@ -1,0 +1,95 @@
+You are given the head of a non-empty linked list representing a non-negative integer without leading zeroes.
+
+Return the head of the linked list after doubling it.
+
+ 
+
+Example 1:
+
+
+Input: head = [1,8,9]
+Output: [3,7,8]
+Explanation: The figure above corresponds to the given linked list which represents the number 189. Hence, the returned linked list represents the number 189 * 2 = 378.
+
+//Solution 1: using stack
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode doubleIt(ListNode head) {
+        Deque<ListNode> stack = new ArrayDeque<>();
+        ListNode dummy = new ListNode(0);
+        int carryOn = 0;
+        ListNode temp = null;
+        while (head != null) {
+            stack.offerFirst(head);
+            head = head.next;
+        }
+        
+        while (!stack.isEmpty()) {
+            int sum = 2 * stack.pollFirst().val + carryOn;
+            carryOn = sum / 10;
+            ListNode newNode = new ListNode(sum % 10);
+            newNode.next = temp;
+            temp = newNode;
+        }
+        if (carryOn != 0) {
+            ListNode carryNode = new ListNode(carryOn);
+            carryNode.next = temp;
+            temp = carryNode;
+        }
+        return temp;
+    }
+}
+
+//Solution 2:  reverse linkedlist first, and construct the linkedlist from end to start direction.  // recommend!
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode doubleIt(ListNode head) {
+        head = reverse(head);   
+        int carry = 0;
+        ListNode dummy = null;
+        while (head != null) {
+            int sum = 2 * head.val + carry;
+            carry = sum / 10;
+            ListNode newNode = new ListNode(sum % 10);
+            newNode.next = dummy;
+            dummy = newNode; 
+            head = head.next;
+        }
+        if (carry != 0) {
+            ListNode node = new ListNode(carry);
+            node.next = dummy;
+            dummy = node;
+        }
+        return dummy;
+
+    }
+
+    private ListNode reverse(ListNode head) {
+        ListNode prev = null;
+        while (head != null) {
+            ListNode next = head.next;
+            head.next = prev;
+            prev = head;
+            head = next;
+        }
+        return prev;
+    }
+}
