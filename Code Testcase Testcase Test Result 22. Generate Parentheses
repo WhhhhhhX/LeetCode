@@ -1,0 +1,46 @@
+Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+
+ 
+
+Example 1:
+
+Input: n = 3
+Output: ["((()))","(()())","(())()","()(())","()()()"]
+Example 2:
+
+Input: n = 1
+Output: ["()"]
+
+
+///dfs,对于左括号，有就加，对于右括号，当加的左括号比右括号多，才能加
+
+class Solution {
+    public List<String> generateParenthesis(int n) {
+        if (n == 0) {
+            return new ArrayList();
+        }
+        List<String> res = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        helper(res, sb, n, n);
+        return res;
+    }
+
+    private void helper(List<String> res, StringBuilder sb, int leftRemain, int rightRemain) {
+        if (leftRemain == 0 && rightRemain == 0) {
+            res.add(sb.toString());
+            return;
+        }
+
+        if (leftRemain != 0) {
+            sb.append('(');
+            helper(res, sb, leftRemain - 1, rightRemain);
+            sb.deleteCharAt(sb.length() - 1);
+        }
+
+        if (rightRemain > leftRemain) {
+            sb.append(')');
+            helper(res, sb, leftRemain, rightRemain - 1);
+            sb.deleteCharAt(sb.length() - 1);
+        }
+    }
+}
