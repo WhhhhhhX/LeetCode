@@ -1,0 +1,45 @@
+Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent. Return the answer in any order.
+
+A mapping of digits to letters (just like on the telephone buttons) is given below. Note that 1 does not map to any letters.
+
+
+ 
+
+Example 1:
+
+Input: digits = "23"
+Output: ["ad","ae","af","bd","be","bf","cd","ce","cf"]
+Example 2:
+
+Input: digits = ""
+Output: []
+Example 3:
+
+Input: digits = "2"
+Output: ["a","b","c"]
+
+
+//肯定是用dfs去recursively的遍历，记得吃吐守恒就行。然后用map或者array把数字对应的字母存起来就行。
+
+class Solution {
+    public List<String> letterCombinations(String digits) {
+        List<String> res = new ArrayList<>();
+        if (digits == null || digits.length() == 0) {
+            return res;
+        }
+        String[] phoneMap = {"abc","def","ghi","jkl","mno","pqrs","tuv","wxyz"};
+        helper("", 0, digits, phoneMap, res);
+        return res;
+    }
+
+    private void helper(String combination, int index, String digits, String[] phoneMap, List<String> res) {
+        if (index == digits.length()) {
+            res.add(combination);
+            return;
+        }
+        String letter = phoneMap[digits.charAt(index) - '2'];
+        for (char c : letter.toCharArray()) {
+            helper(combination + c, index + 1, digits, phoneMap, res);
+        }
+    }
+}
