@@ -21,6 +21,8 @@ Output: ["a","b","c"]
 
 //肯定是用dfs去recursively的遍历，记得吃吐守恒就行。然后用map或者array把数字对应的字母存起来就行。
 
+//这是用string来叠加答案，用stringbuilder一样可以，速度还快。
+
 class Solution {
     public List<String> letterCombinations(String digits) {
         List<String> res = new ArrayList<>();
