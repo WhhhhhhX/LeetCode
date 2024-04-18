@@ -1,0 +1,65 @@
+Given a non-negative integer x, return the square root of x rounded down to the nearest integer. The returned integer should be non-negative as well.
+
+You must not use any built-in exponent function or operator.
+
+For example, do not use pow(x, 0.5) in c++ or x ** 0.5 in python.
+ 
+
+Example 1:
+
+Input: x = 4
+Output: 2
+Explanation: The square root of 4 is 2, so we return 2.
+Example 2:
+
+Input: x = 8
+Output: 2
+Explanation: The square root of 8 is 2.82842..., and since we round it down to the nearest integer, 2 is returned.
+
+/*
+Approach
+We first check if x is 0 or 1. If it is, we know that the square root of 0 and 1 is 0 and 1 respectively, so we directly return x.
+
+For any other value of x, we set up a search range between 1 and x. We initialize two variables start and end to represent the range.
+
+Now comes the clever part: We use a while loop to repeatedly divide the search range in half (Binary Search) to find the square root.
+
+In each iteration of the loop, we calculate the middle value mid using the formula start + (end - start) / 2. This formula ensures that we don't encounter any integer overflow when dealing with large values of x.
+
+Next, we calculate the square of mid and compare it with x.
+
+If the square of mid is greater than x, we know the square root lies in the lower half of the search range. So, we move the end pointer to the left to narrow down the search range.
+
+If the square of mid is equal to x, we have found the square root! So, we return mid as the answer.
+
+If the square of mid is less than x, we know the square root lies in the upper half of the search range. So, we move the start pointer to the right to continue the search.
+
+We repeat steps 4 to 8 until the start pointer becomes greater than the end pointer. At this point, we have found the floor value of the square root, and end holds that value.
+
+To ensure that we return the correct floor value of the square root, we round down the value of end to the nearest integer using the Math.round() method.
+
+*/
+
+class Solution {
+    public int mySqrt(int x) {
+        if (x == 0 || x == 1) {
+            return x;
+        }
+        int left = 1;
+        int right = x;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            //long midSquare = ;
+            long midSquare = (long) mid * (long) mid;
+            if (midSquare == (long)x) {
+                return mid;
+            } else if (midSquare > (long)x) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return Math.round(right);
+        
+    }
+}
