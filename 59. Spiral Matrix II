@@ -1,0 +1,59 @@
+Given a positive integer n, generate an n x n matrix filled with elements from 1 to n2 in spiral order.
+
+ 
+
+Example 1:
+Input: n = 3
+Output: [[1,2,3],[8,9,4],[7,6,5]]
+
+Example 2:
+Input: n = 1
+Output: [[1]]
+
+//  思路和spiral matrix I一样
+class Solution {
+    public int[][] generateMatrix(int n) {
+        int[][] res = new int[n][n];
+        if (n == 1) {
+            return new int[][]{{1}};
+        }
+        int rowBegin = 0;
+        int rowEnd = n - 1;
+        int colBegin = 0;
+        int colEnd = n - 1;
+        int num = 1;
+
+        while (rowBegin <= rowEnd && colBegin <= colEnd) {
+            for (int i = colBegin; i <= colEnd; i++) {
+                if (num >= 1 && num <= n * n) {
+                    res[rowBegin][i] = num++;
+                }
+            }
+            rowBegin++;
+            for (int i = rowBegin; i <= rowEnd; i++) {
+                if (num >= 1 && num <= n * n) {
+                    res[i][colEnd] = num++;
+                }
+            }
+            colEnd--;
+
+            if (rowBegin <= rowEnd) {
+                for (int i = colEnd; i >= colBegin; i--) {
+                    if (num >= 1 && num <= n * n) {
+                        res[rowEnd][i] = num++;
+                    }
+                }
+            }
+            rowEnd--;
+            if (colBegin <= colEnd) {
+                for (int i = rowEnd; i >= rowBegin; i--) {
+                    res[i][colBegin] = num++;
+                }
+            }
+            colBegin++;
+        }
+        return res;
+    }
+
+   
+}
