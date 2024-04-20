@@ -1,0 +1,48 @@
+Given an integer array nums that may contain duplicates, return all possible 
+subsets
+ (the power set).
+
+The solution set must not contain duplicate subsets. Return the solution in any order.
+
+ 
+
+Example 1:
+
+Input: nums = [1,2,2]
+Output: [[],[1],[1,2],[1,2,2],[2],[2,2]]
+Example 2:
+
+Input: nums = [0]
+Output: [[],[0]]
+
+
+//dfs 先对array排序，使其相同的element在一起，然后对duplicate做处理，idea is 如果不要第一个重复元素2， ([1,2222,3])，那后面的重复元素都别要，直接skip 
+
+
+class Solution {
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
+        List<Integer> cur = new ArrayList<>();
+        Arrays.sort(nums);
+        helper(nums, res, cur, 0);
+        return res;
+    }
+
+    private void helper(int[] nums, List<List<Integer>> res, List<Integer> cur, int index) {
+        if (index == nums.length) {
+            res.add(new ArrayList(cur));
+            return;
+        }
+
+        cur.add(nums[index]);
+        helper(nums, res, cur, index + 1);
+        cur.remove(cur.size() - 1);
+
+        
+        while (index < nums.length - 1 && nums[index] == nums[index + 1]) {
+            index++;
+        }
+        
+        helper(nums, res, cur, index + 1);
+    }
+}
