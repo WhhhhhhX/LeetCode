@@ -1,0 +1,69 @@
+Given two integer arrays preorder and inorder where preorder is the preorder traversal of a binary tree and inorder is the inorder traversal of the same tree, construct and return the binary tree.
+
+Example 1:
+
+
+Input: preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]
+Output: [3,9,20,null,null,15,7]
+Example 2:
+
+Input: preorder = [-1], inorder = [-1]
+Output: [-1]
+/****
+这个题有几个关键信息：
+1. preorder[0] = root
+2. 通过确定root，用lookup operation 在map里找inorder里的这个root对应的index，在这个root左侧是左子树，右侧是右子树。
+
+如果给的是postorder，root = postorder[last index]
+如果给level order, root = level[0] = pre[0]
+****/
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        int preLeft = 0;
+        int preRight = preorder.length - 1;
+        int inLeft = 0;
+        int inRight = inorder.length - 1;
+        Map<Integer, Integer> map = buildMap(inorder);
+        
+        return helper(preorder, preLeft, preRight, inorder, inLeft, inRight, map); 
+    }
+
+    private TreeNode helper(int[] preorder, int pL, int pR, int[] inorder, int iL, int iR, Map<Integer, Integer> map) {
+        if (pL > pR || iL > iR) {
+            return null;
+        }
+        
+        TreeNode root = new TreeNode(preorder[pL]);
+        int rootIndex = map.get(root.val);
+        int leftSubLength = rootIndex - iL;
+
+        root.left = helper(preorder, pL + 1, pL + leftSubLength, inorder, iL, rootIndex - 1, map);
+        root.right = helper(preorder, pL + leftSubLength + 1, pR, inorder, rootIndex + 1, iR, map);
+
+        return root;
+    }
+
+    private Map<Integer, Integer> buildMap(int[] arr) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < arr.length; i++) {
+            map.put(arr[i], i);
+        }
+        return map;
+    }
+}
