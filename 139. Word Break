@@ -43,7 +43,7 @@ class Solution {
 }
 
 
-//dp时间复杂度更小
+//dp时间复杂度更小，按照worddict里单词的长度进行比较，而不是逐一递增的比较
 class Solution {
     public boolean wordBreak(String s, List<String> wordDict) {
         if (s == null || s.length() == 0) {
