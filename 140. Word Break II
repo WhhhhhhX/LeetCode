@@ -1,0 +1,62 @@
+Given a string s and a dictionary of strings wordDict, add spaces in s to construct a sentence where each word is a valid dictionary word. Return all such possible sentences in any order.
+
+Note that the same word in the dictionary may be reused multiple times in the segmentation.
+
+ 
+
+Example 1:
+
+Input: s = "catsanddog", wordDict = ["cat","cats","and","sand","dog"]
+Output: ["cats and dog","cat sand dog"]
+Example 2:
+
+Input: s = "pineapplepenapple", wordDict = ["apple","pen","applepen","pine","pineapple"]
+Output: ["pine apple pen apple","pineapple pen apple","pine applepen apple"]
+Explanation: Note that you are allowed to reuse a dictionary word
+
+//dfs，，每次分割一个字符之后的word，然后查询set里有没有这个word，有就进行，没有就i++
+
+class Solution {
+    public List<String> wordBreak(String s, List<String> wordDict) {
+        List<String> res = new ArrayList<>();
+        if (s == null || s.length() == 0) {
+            return res;
+        }
+        StringBuilder sb = new StringBuilder();
+        int n = s.length();
+        Set<String> set = new HashSet<>(wordDict);
+        int[] count = new int[26];
+        for (String word : wordDict) {
+            for (char c : word.toCharArray()) {
+                count[c - 'a']++;
+            }
+        }
+        for (char c : s.toCharArray()) {
+            if (count[c - 'a'] == 0) {
+                return res;
+            }
+        }
+        helper(res, s, sb, set, n, 0);
+        return res;
+    }
+    private void helper(List<String> res, String s, StringBuilder sb, Set<String> set, int len, int startIndex) {
+        if (startIndex == len) {
+            res.add(sb.toString());
+            return;
+        }
+        for (int i = startIndex; i < len; i++) {
+            String curStr = s.substring(startIndex, i + 1);
+            if (set.contains(curStr)) {
+                int beforeAddingIndex = sb.length();
+                if (beforeAddingIndex == 0) {
+                    sb.append(curStr);
+                } else {
+                    sb.append(' ');
+                    sb.append(curStr);
+                }
+                helper(res, s, sb, set, len, i + 1);
+                sb.delete(beforeAddingIndex, sb.length());
+            }
+        }
+    }
+}
