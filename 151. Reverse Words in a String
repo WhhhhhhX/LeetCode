@@ -1,0 +1,76 @@
+Given an input string s, reverse the order of the words.
+
+A word is defined as a sequence of non-space characters. The words in s will be separated by at least one space.
+
+Return a string of the words in reverse order concatenated by a single space.
+
+Note that s may contain leading or trailing spaces or multiple spaces between two words. The returned string should only have a single space separating the words. Do not include any extra spaces.
+
+ 
+
+Example 1:
+
+Input: s = "the sky is blue"
+Output: "blue is sky the"
+Example 2:
+
+Input: s = "  hello world  "
+Output: "world hello"
+Explanation: Your reversed string should not contain leading or trailing spaces.
+Example 3:
+
+Input: s = "a good   example"
+Output: "example good a"
+Explanation: You need to reduce multiple spaces between two words to a single space in the reversed string.
+
+
+// 当遇到这种反转整体但局部不反转的时候，可以用 i love yahoo trick, 先整体反转，再局部反转，反之也可以。
+
+class Solution {
+    public String reverseWords(String s) {
+        if (s == null || s.length() == 0) {
+            return s;
+        }
+        
+        char[] array = s.toCharArray();
+        String newS = preProcess(array);
+        char[] newArray = newS.toCharArray();
+        swap(newArray, 0, newArray.length - 1);
+        int start = 0;
+        int end = 0;
+        for (int i = 0; i < newArray.length; i++) {
+            if (newArray[i] != ' ' && (i == 0 || newArray[i - 1] == ' ')) {
+                start = i;
+            }
+            if (newArray[i] != ' ' && (i == newArray.length - 1 ||newArray[i + 1] == ' ')) {             end = i;
+            swap(newArray, start, end);
+
+            }
+        }
+        return new String(newArray);
+
+    }
+    private void swap(char[] array, int a, int b) {
+        while (a < b) {
+            char temp = array[a];
+            array[a] = array[b];
+            array[b] = temp;
+            a++;
+            b--;
+        }
+    }
+    private String preProcess(char[] array) {
+        int j = 0;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == ' ' && (i == 0 || array[i - 1] == ' ')) {
+                continue;
+            } else {
+                array[j++] = array[i];
+            }
+        }
+        if (j > 0 && array[j - 1] == ' ') {
+            j--;
+        }
+        return new String(array, 0, j);
+    }
+}
