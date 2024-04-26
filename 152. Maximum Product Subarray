@@ -1,0 +1,44 @@
+Given an integer array nums, find a 
+subarray
+ that has the largest product, and return the product.
+
+The test cases are generated so that the answer will fit in a 32-bit integer.
+
+ 
+
+Example 1:
+
+Input: nums = [2,3,-2,4]
+Output: 6
+Explanation: [2,3] has the largest product 6.
+Example 2:
+
+Input: nums = [-2,0,-1]
+Output: 0
+Explanation: The result cannot be 2, because [-2,-1] is not a subarray.
+
+//dp数学归纳法 induction rule: 最大值 * 当前值， 最小值 * 当前值， 当前的值。这三者比大小，然后把最大值复制给result
+
+class Solution {
+    public int maxProduct(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        if (nums.length == 1) {
+            return nums[0];
+        }
+        int curMax = nums[0];
+        int curMin = nums[0];
+        int res = nums[0];
+        int a = 0;
+        int b = 0;
+        for (int i = 1; i < nums.length; i++) {
+            a = curMax * nums[i];
+            b = curMin * nums[i];
+            curMax = Math.max(nums[i], Math.max(a, b));
+            curMin = Math.min(nums[i], Math.min(a, b));
+            res = Math.max(res, curMax);
+        }
+        return res;
+    }
+}
