@@ -1,0 +1,69 @@
+Given an array of characters chars, compress it using the following algorithm:
+
+Begin with an empty string s. For each group of consecutive repeating characters in chars:
+
+If the group's length is 1, append the character to s.
+Otherwise, append the character followed by the group's length.
+The compressed string s should not be returned separately, but instead, be stored in the input character array chars. Note that group lengths that are 10 or longer will be split into multiple characters in chars.
+
+After you are done modifying the input array, return the new length of the array.
+
+You must write an algorithm that uses only constant extra space.
+
+ 
+
+Example 1:
+
+Input: chars = ["a","a","b","b","c","c","c"]
+Output: Return 6, and the first 6 characters of the input array should be: ["a","2","b","2","c","3"]
+Explanation: The groups are "aa", "bb", and "ccc". This compresses to "a2b2c3".
+Example 2:
+
+Input: chars = ["a"]
+Output: Return 1, and the first character of the input array should be: ["a"]
+Explanation: The only group is "a", which remains uncompressed since it's a single character.
+
+
+//先从左到右双指针loop一遍，并把single character保留下来，重复的character直接转换成对应的format即可，返回start。
+
+//Start : start的左边不包含start是答案
+//end: end的右边是待搜索区域
+//[start, end)：垃圾区域 don‘t care 
+
+class Solution {
+    public int compress(char[] chars) {
+        if (chars == null || chars.length == 0) {
+            return 0;
+        }
+        int start = 0;
+        int end = 0;
+        while (end < chars.length) {
+            int begin = end;
+            while (end < chars.length && chars[end] == chars[begin]) {
+                end++;
+            }
+            chars[start++] = chars[begin];
+            if (begin + 1 == end) {
+                continue;
+            } else {
+                int lenOfManyChar = copyDigit(chars, start, end - begin);
+                start += lenOfManyChar;
+            }
+        }
+        return start;
+        
+    }
+
+    private int copyDigit(char[] arr, int startIndex, int count) {
+        int len = 0;
+        for (int i = count; i > 0; i /= 10) {
+            len++;
+            startIndex++;
+        }
+        for (int i = count; i > 0; i /= 10) {
+            arr[--startIndex] = (char)(count % 10 + '0');
+            count /= 10;
+        }
+        return len;
+    }
+}
