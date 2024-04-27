@@ -1,0 +1,55 @@
+Given a string s, return the length of the longest 
+substring
+ that contains at most two distinct characters.
+
+ 
+
+Example 1:
+
+Input: s = "eceba"
+Output: 3
+Explanation: The substring is "ece" which its length is 3.
+Example 2:
+
+Input: s = "ccaabbb"
+Output: 5
+Explanation: The substring is "aabbb" which its length is 5.
+
+//sliding window + map
+
+class Solution {
+    private final int NUM = 2;
+    public int lengthOfLongestSubstringTwoDistinct(String s) {
+        if (s == null) {
+            return 0;
+        }
+        if (s.length() < 3) {
+            return s.length();
+        }
+        char[] arr = s.toCharArray();
+        Map<Character, Integer> map = new HashMap<>();
+        int start = 0;
+        int end = 0;
+        int max = 0;
+        while (end < s.length()) {
+            if (map.size() <= NUM) {
+                char newChar = s.charAt(end);
+                map.put(newChar, map.getOrDefault(newChar, 0) + 1);
+                end++;
+            } else {
+                char charToBeRemoved = s.charAt(start);
+                int count = map.get(charToBeRemoved) - 1;
+                if (count == 0) {
+                    map.remove(charToBeRemoved);
+                } else {
+                    map.put(charToBeRemoved, count);
+                }
+                start++;
+            }
+            if (map.size() <= NUM) {
+                max = Math.max(max, (end - start));
+            }
+        }
+        return max;
+    }
+}
