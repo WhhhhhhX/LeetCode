@@ -1,0 +1,44 @@
+Given a list of non-negative integers nums, arrange them such that they form the largest number and return it.
+
+Since the result may be very large, so you need to return a string instead of an integer.
+
+ 
+
+Example 1:
+
+Input: nums = [10,2]
+Output: "210"
+Example 2:
+
+Input: nums = [3,30,34,5,9]
+Output: "9534330"
+
+//假如有a和b两个string的数字，怎么组合比较大呢？那就是比较 a+b和 b+a看谁大，就能比出a和b谁大
+
+class Solution {
+    public String largestNumber(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return "";
+        }
+        if (nums.length == 1) {
+            return String.valueOf(nums[0]);
+        }
+        String[] strArr = new String[nums.length];
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < nums.length; i++) {
+            strArr[i] = String.valueOf(nums[i]);
+        }
+        Arrays.sort(strArr, (a, b) -> {
+            String s1 = a + b;
+            String s2 = b + a;
+            return s2.compareTo(s1);
+        });
+        if (strArr[0].equals("0")) {
+            return "0";
+        }
+        for (String str : strArr) {
+            sb.append(str);
+        }
+        return sb.toString();
+    }
+}
