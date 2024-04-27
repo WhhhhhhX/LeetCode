@@ -1,0 +1,54 @@
+Given two integers representing the numerator and denominator of a fraction, return the fraction in string format.
+
+If the fractional part is repeating, enclose the repeating part in parentheses.
+
+If multiple answers are possible, return any of them.
+
+It is guaranteed that the length of the answer string is less than 104 for all the given inputs.
+
+ 
+
+Example 1:
+
+Input: numerator = 1, denominator = 2
+Output: "0.5"
+Example 2:
+
+Input: numerator = 2, denominator = 1
+Output: "2"
+
+//用map来存储remainder的值和在sb中对应的index，一旦map中contains，就表明余数重复，就需要加在对应的位置加括弧。
+//如果map中不存在，就put进map中，同时！！！当前的remainder需要* 10 才能去除分母！！！// line 48
+
+class Solution {
+    public String fractionToDecimal(int numerator, int denominator) {
+        if (numerator == 0) {
+            return "0";
+        }
+        StringBuilder sb = new StringBuilder();
+        if (numerator < 0 && denominator > 0 || numerator > 0 && denominator < 0) {
+            sb.append("-");
+        }
+        long dividend = Math.abs((long) numerator);
+        long divisor = Math.abs((long) denominator);
+        sb.append(dividend / divisor);
+        long remainder = dividend % divisor;
+        if (remainder == 0) {
+            return sb.toString();
+        }  
+        sb.append(".");
+        Map<Long, Integer> map = new HashMap<>(); //key = remainder value, Val = index of element in sb
+        while (remainder != 0) {
+            if (map.containsKey(remainder)) {
+                sb.insert(map.get(remainder), "(");
+                sb.append(")");
+                break;
+            }
+            map.put(remainder, sb.length());
+            remainder *= 10;
+            sb.append(remainder / divisor);
+            remainder %= divisor;
+        }
+        return sb.toString();
+    }
+}
