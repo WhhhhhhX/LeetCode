@@ -1,0 +1,61 @@
+Given a rows x cols screen and a sentence represented as a list of strings, return the number of times the given sentence can be fitted on the screen.
+
+The order of words in the sentence must remain unchanged, and a word cannot be split into two lines. A single space must separate two consecutive words in a line.
+
+ 
+
+Example 1:
+
+Input: sentence = ["hello","world"], rows = 2, cols = 8
+Output: 1
+Explanation:
+hello---
+world---
+The character '-' signifies an empty space on the screen.
+Example 2:
+
+Input: sentence = ["a", "bcd", "e"], rows = 3, cols = 6
+Output: 2
+Explanation:
+a-bcd- 
+e-a---
+bcd-e-
+The character '-' signifies an empty space on the screen.
+Example 3:
+
+Input: sentence = ["i","had","apple","pie"], rows = 4, cols = 5
+Output: 1
+Explanation:
+i-had
+apple
+pie-i
+had--
+The character '-' signifies an empty space on the screen.
+
+
+//这道题有个细节就是每行的起始位置都是一个单词，所以我门首先用dp思想计算以每一个单词为首，每行能放多少个单词，然后再用第二个for循环遍历所有的行，计算总共能放多少单词。
+
+class Solution {
+    public int wordsTyping(String[] sentence, int rows, int cols) {
+        int n = sentence.length;
+        int[] memo = new int[n];
+        for (int i = 0; i < n; i++) {
+            int len = 0;
+            int wordNum = 0;
+            int index = i;
+            while (len + sentence[index % n].length() <= cols) {
+                len += sentence[index % n].length() + 1;
+                wordNum++;
+                index++;
+            }
+            memo[i] = wordNum;
+        }
+        int totalWords = 0;
+        int strIndex = 0;
+        for (int i = 0; i < rows; i++) {
+            totalWords += memo[strIndex];
+            strIndex = (memo[strIndex] + strIndex) % n;
+        }
+        return totalWords / n;
+    }
+}
