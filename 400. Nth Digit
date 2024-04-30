@@ -1,0 +1,42 @@
+Given an integer n, return the nth digit of the infinite integer sequence [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, ...].
+
+ 
+
+Example 1:
+
+Input: n = 3
+Output: 3
+Example 2:
+
+Input: n = 11
+Output: 0
+Explanation: The 11th digit of the sequence 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, ... is a 0, which is part of the number 10.
+ 
+
+Constraints:
+
+1 <= n <= 231 - 1
+
+思路就是我们首先要判断n在一位数，二位数，三位数...具体在几位数的区间，一位数有9个，base = 9，二位数有90个， base *= 10来变换，然后初始值以为是从1开始，二位数从10开始，所以startnum *= 10， 当从一位数变成
+二位数的时候，digitNum++，代表当前是在几位数。
+找到区间之后，再进行具体在哪个数字上进行定位。注意是n-1 index
+
+
+class Solution {
+    public int findNthDigit(int n) {
+        int startNum = 1;
+        int digitNum = 1;
+        long base = 9;
+
+        while (n - digitNum * base > 0) {
+            n -= digitNum * base;
+            startNum *= 10;
+            digitNum++;
+            base *= 10;
+        }
+        startNum += (n - 1) / digitNum;
+        String curNum = String.valueOf(startNum);
+        char c = curNum.charAt((n - 1) % digitNum);
+        return c - '0';
+    }
+}
