@@ -1,0 +1,62 @@
+Given an integer array nums and an integer k, return the k most frequent elements. You may return the answer in any order.
+
+ 
+
+Example 1:
+
+Input: nums = [1,1,1,2,2,3], k = 2
+Output: [1,2]
+Example 2:
+
+Input: nums = [1], k = 1
+Output: [1]
+
+//map统计frequency，priorityqueue minheap去存储
+
+class Solution {
+    public int[] topKFrequent(int[] nums, int k) {
+        int[] res = new int[k];
+        if (k == 0) {
+            return res;
+        }
+        Map<Integer, Integer> freqMap = buildMap(nums);
+        PriorityQueue<Map.Entry<Integer, Integer>> minHeap = new PriorityQueue<>(k, new Comparator<Map.Entry<Integer, Integer>>() {
+            @Override
+            public int compare(Map.Entry<Integer, Integer> e1, Map.Entry<Integer, Integer> e2) {
+                if (e1.getValue() == e2.getValue()) {
+                    return 0;
+                }
+                return e1.getValue() - e2.getValue() < 0 ? -1 : 1;
+            }
+        });
+        for (Map.Entry<Integer, Integer> entry : freqMap.entrySet()) {
+            if (minHeap.size() < k) {
+                minHeap.offer(entry);
+            } else {
+                if (entry.getValue() > minHeap.peek().getValue()) {
+                    minHeap.poll();
+                    minHeap.offer(entry);
+                }
+            }
+        }
+        for (int i = 0; i < k; i++) {
+            res[i] = minHeap.poll().getKey();
+        }
+        return res;
+    }
+
+    private Map<Integer, Integer> buildMap(int[] nums) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i : nums) {
+            map.put(i, map.getOrDefault(i, 0) + 1);
+        }
+        return map;
+    }
+
+}
+
+////TC: O(n + nlogk)
+// push into hashmap: O(n) 
+// using minheap(line 42-51): klogK + (n-k)logk = nlogk
+// pop result from minheap: klogk
+//SC: O(n)
