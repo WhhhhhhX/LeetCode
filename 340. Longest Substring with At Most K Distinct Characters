@@ -1,0 +1,43 @@
+Given a string s and an integer k, return the length of the longest 
+substring
+ of s that contains at most k distinct characters.
+
+ 
+
+Example 1:
+
+Input: s = "eceba", k = 2
+Output: 3
+Explanation: The substring is "ece" with length 3.
+Example 2:
+
+Input: s = "aa", k = 1
+Output: 2
+Explanation: The substring is "aa" with length 2.
+
+//map去存储，一旦map size大于k，则减小sliding window。
+
+class Solution {
+    public int lengthOfLongestSubstringKDistinct(String s, int k) {
+        if (s == null || s.length() == 0 || k == 0) {
+            return 0;
+        }
+        Map<Character, Integer> map = new HashMap<>();  //map: char, index
+        int start = 0;
+        int res = 0;
+        for (int end = 0; end < s.length(); end++) {
+            map.put(s.charAt(end), end);
+            if (map.size() > k) {
+                int smallestIndex = end;
+                for (int i : map.values()) {
+                    smallestIndex = Math.min(i, smallestIndex);
+                }
+                
+                start = smallestIndex + 1; 
+                map.remove(s.charAt(smallestIndex)); // 要记得把这个元素从map中移除
+            }
+            res = Math.max(res, end - start + 1);
+        }
+        return res;
+    }
+}
