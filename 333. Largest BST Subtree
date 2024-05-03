@@ -1,0 +1,78 @@
+Given the root of a binary tree, find the largest 
+subtree
+, which is also a Binary Search Tree (BST), where the largest means subtree has the largest number of nodes.
+
+A Binary Search Tree (BST) is a tree in which all the nodes follow the below-mentioned properties:
+
+The left subtree values are less than the value of their parent (root) node's value.
+The right subtree values are greater than the value of their parent (root) node's value.
+Note: A subtree must include all of its descendants.
+
+ 
+
+Example 1:
+
+
+
+Input: root = [10,5,15,1,8,null,7]
+Output: 3
+Explanation: The Largest BST Subtree in this case is the highlighted one. The return value is the subtree's size, which is 3.
+Example 2:
+
+Input: root = [4,2,7,2,3,5,null,2,null,null,null,null,null,1]
+Output: 2
+
+//直接声明一个class， 里面包含是否是bst，以及如果是bst的话，这个树的最大值和最小值，和size。这些信息将返回父函数去使用。
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    class SubTreeInfo {
+        boolean isBST;
+        int min;
+        int max;
+        int size;
+
+        SubTreeInfo(boolean isBST, int min, int max, int size) {
+            this.isBST = isBST;
+            this.min = min;
+            this.max = max;
+            this.size = size;
+        }
+    }
+    public int largestBSTSubtree(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        return helper(root).size;
+    }
+    private SubTreeInfo helper(TreeNode root) {
+        if (root == null) {
+            return new SubTreeInfo(true, Integer.MAX_VALUE, Integer.MIN_VALUE, 0);
+        }
+        SubTreeInfo left = helper(root.left);
+        SubTreeInfo right = helper(root.right);
+
+        if (left.isBST && right.isBST && root.val > left.max && root.val < right.min) {
+            int size = left.size + right.size + 1;
+            int min = Math.min(root.val, left.min);
+            int max = Math.max(root.val, right.max);
+            return new SubTreeInfo(true, min, max, size);
+        } else {
+            return new SubTreeInfo(false, 0, 0, Math.max(left.size, right.size));
+        }
+    }
+}
