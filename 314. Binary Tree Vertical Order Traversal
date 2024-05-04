@@ -1,0 +1,92 @@
+Given the root of a binary tree, return the vertical order traversal of its nodes' values. (i.e., from top to bottom, column by column).
+
+If two nodes are in the same row and column, the order should be from left to right.
+
+ 
+
+Example 1:
+
+
+Input: root = [3,9,20,null,null,15,7]
+Output: [[9],[3,15],[20],[7]]
+Example 2:
+
+
+Input: root = [3,9,8,4,0,1,7]
+Output: [[4],[9],[3,0,1],[8],[7]]
+Example 3:
+
+
+Input: root = [3,9,8,4,0,1,7,null,null,null,2,5]
+Output: [[4],[9,5],[3,0,1],[8,2],[7]]
+ 
+
+Constraints:
+
+The number of nodes in the tree is in the range [0, 100].
+-100 <= Node.val <= 100
+
+/*** 
+从root开始，设定水平距离为0，然后root子树的水平距离为0 - 1， root右子树的水平距离为0 + 1，反正就是以当前root为base，左子树就当前root的水平距离减去1，右子树就加上1，然后用map把水平距离相等的放在一个list里面，
+要记录全局的最小水平距离和最大水平距离，因为map存储是无序的，最后输出要从小到大，所以最后用这两个变量去从小到大输出结果。
+***/
+
+//bfs进行遍历。需要一个新的class来储存每个node的节点和对应的水平距离。
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    class Node {
+        TreeNode root;
+        int horizontalDistance;
+
+        public Node (TreeNode root, int horizontalDistance) {
+            this.root = root;
+            this.horizontalDistance = horizontalDistance;
+        }
+    }
+    public List<List<Integer>> verticalOrder(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (root == null) {
+            return res;
+        }
+        Queue<Node> queue = new LinkedList<>();
+        Map<Integer, List<Integer>> map = new HashMap<>();
+        int minHorizontalDistance = Integer.MAX_VALUE;
+        int maxHorizontalDistance = Integer.MIN_VALUE;
+        queue.offer(new Node (root, 0));
+        while (!queue.isEmpty()) {
+            Node cur = queue.poll();
+            map.putIfAbsent(cur.horizontalDistance, new ArrayList());
+            map.get(cur.horizontalDistance).add(cur.root.val);
+            minHorizontalDistance = Math.min(minHorizontalDistance, cur.horizontalDistance);
+            maxHorizontalDistance = Math.max(maxHorizontalDistance, cur.horizontalDistance);
+
+            if (cur.root.left != null) {
+                queue.offer(new Node(cur.root.left, cur.horizontalDistance - 1));
+            }
+            if (cur.root.right != null) {
+                queue.offer(new Node(cur.root.right, cur.horizontalDistance + 1));
+            }
+        }
+        for (int i = minHorizontalDistance; i <= maxHorizontalDistance; i++) {
+            res.add(map.get(i));
+        }
+        return res;
+    }
+}
+
+
