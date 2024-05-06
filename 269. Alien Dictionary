@@ -1,0 +1,101 @@
+There is a new alien language that uses the English alphabet. However, the order of the letters is unknown to you.
+
+You are given a list of strings words from the alien language's dictionary. Now it is claimed that the strings in words are 
+sorted lexicographically
+ by the rules of this new language.
+
+If this claim is incorrect, and the given arrangement of string in words cannot correspond to any order of letters, return "".
+
+Otherwise, return a string of the unique letters in the new alien language sorted in lexicographically increasing order by the new language's rules. If there are multiple solutions, return any of them.
+
+ 
+
+Example 1:
+
+Input: words = ["wrt","wrf","er","ett","rftt"]
+Output: "wertf"
+Example 2:
+
+Input: words = ["z","x"]
+Output: "zx"
+Example 3:
+
+Input: words = ["z","x","z"]
+Output: ""
+Explanation: The order is invalid, so return "".
+
+
+/***
+topological sort + bfs
+https://www.youtube.com/watch?v=RIrTuf4DfPE
+***/
+
+class Solution {
+    public String alienOrder(String[] words) {
+        if (words == null || words.length == 0) {
+            return "";
+        }
+        int[] indegree = new int[26];
+
+        //test case: ["abc", "ab"], should return ""
+        for (int i = 0; i< words.length - 1; i++) {
+            if (words[i].length() > words[i + 1].length() && words[i].startsWith(words[i + 1])) {
+                return "";
+            }
+        }
+        //key val : outdegree indegree
+        Map<Character, Set<Character>> graph = new HashMap<>(); 
+        buildGraph(graph, words, indegree);
+        return bfsHelper(graph, indegree);
+    }
+    private void buildGraph(Map<Character, Set<Character>> graph, String[] words, int[] indegree) {
+        for (String word : words) {
+            for (char c : word.toCharArray()) {
+                graph.putIfAbsent(c, new HashSet<>());
+            }
+        }
+        
+        for (int i = 1; i < words.length; i++) {
+            String firstStr = words[i - 1];
+            String secondStr = words[i];
+            int len = Math.min(firstStr.length(), secondStr.length());
+            for (int j = 0; j < len; j++) {
+                if (firstStr.charAt(j) != secondStr.charAt(j)) {
+                    char out = firstStr.charAt(j);
+                    char in = secondStr.charAt(j);
+                    if (!graph.get(out).contains(in)) {
+                        graph.get(out).add(in);
+                        indegree[in - 'a']++;
+                    }
+                    break;
+                }
+            }
+
+        }
+    }
+
+    private String bfsHelper(Map<Character, Set<Character>> graph, int[] indegree) {
+        Queue<Character> q = new LinkedList<>();
+        StringBuilder sb = new StringBuilder();
+        for (char c : graph.keySet()) {
+            if (indegree[c - 'a'] == 0) {
+                q.offer(c);
+                sb.append(c);
+            }
+        }
+        while (!q.isEmpty()) {
+            char out = q.poll();
+            if (graph.get(out) == null || graph.get(out).size() == 0) {
+                continue;
+            }
+            for (char in : graph.get(out)) {
+                indegree[in - 'a']--;
+                if (indegree[in - 'a'] == 0) {
+                    q.offer(in);
+                    sb.append(in);
+                }
+            }
+        }
+        return sb.length() == graph.size() ? sb.toString() : "";
+    }
+}
