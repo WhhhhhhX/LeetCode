@@ -1,0 +1,78 @@
+You have a graph of n nodes labeled from 0 to n - 1. You are given an integer n and a list of edges where edges[i] = [ai, bi] indicates that there is an undirected edge between nodes ai and bi in the graph.
+
+Return true if the edges of the given graph make up a valid tree, and false otherwise.
+
+ 
+
+Example 1:
+
+
+Input: n = 5, edges = [[0,1],[0,2],[0,3],[1,4]]
+Output: true
+Example 2:
+
+
+Input: n = 5, edges = [[0,1],[1,2],[2,3],[1,3],[1,4]]
+Output: false
+ 
+
+Constraints:
+
+1 <= n <= 2000
+0 <= edges.length <= 5000
+edges[i].length == 2
+0 <= ai, bi < n
+ai != bi
+There are no self-loops or repeated edges.
+
+//union find
+当一个edge的两个vertex已经被连接之后如[1-> 2->3] which means 1 is parent of 3，之后再碰见这两个点[1,3]则直接返回false，因为此时从1到3有路径了，所以这个图里已经有重复路径，就false
+
+class Solution {
+    class UnionFind {
+        private int[] parents;
+        private int[] rank;
+
+        public UnionFind(int n) {
+            this.parents = new int[n];
+            this.rank = new int[n];
+
+            for (int i = 0; i < n; i++) {
+                parents[i] = i;
+                rank[i] = 1;
+            }
+        }
+
+        public boolean union(int x, int y) {
+            int xParent = find(x);
+            int yParent = find(y);
+            if (xParent == yParent) {
+                return false;
+            }
+
+            if (rank[xParent] > rank[yParent]) {
+                parents[yParent] = xParent;
+            } else if (rank[xParent] < rank[yParent]) {
+                parents[xParent] = yParent;
+            } else {
+                parents[yParent] = xParent;
+                rank[xParent]++;
+            }
+            return true;
+        }
+        private int find(int node) {
+            if (node == parents[node]) return node;
+            return find(parents[node]);
+        }
+    }
+    public boolean validTree(int n, int[][] edges) {
+        if(edges.length + 1 < n) return false;
+        UnionFind uf = new UnionFind(n);
+        for (int[] edge : edges) {
+            if (!uf.union(edge[0], edge[1])) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
