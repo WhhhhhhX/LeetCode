@@ -1,0 +1,99 @@
+Given a string s which represents an expression, evaluate this expression and return its value. 
+
+The integer division should truncate toward zero.
+
+You may assume that the given expression is always valid. All intermediate results will be in the range of [-231, 231 - 1].
+
+Note: You are not allowed to use any built-in function which evaluates strings as mathematical expressions, such as eval().
+
+ 
+
+Example 1:
+
+Input: s = "3+2*2"
+Output: 7
+Example 2:
+
+Input: s = " 3/2 "
+Output: 1
+Example 3:
+
+Input: s = " 3+5 / 2 "
+Output: 5
+ 
+//像这种题就用stack，遇到符号，pop出前一个数和当前数做运算
+
+class Solution {
+    public int calculate(String s) {
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+        int res = 0;
+        int num = 0;
+        char sign = '+';
+        Deque<Integer> stack = new ArrayDeque<>();
+        for (int i = 0; i < s.length(); i++) {
+            char c =  s.charAt(i);
+            if (Character.isDigit(s.charAt(i))) {
+               num = num * 10 + (c - '0');  
+            }
+
+            if (!Character.isDigit(s.charAt(i)) && s.charAt(i) != ' ' || i == s.length() - 1) {
+                if (sign == '+') stack.offerFirst(num);
+                if (sign == '-') stack.offerFirst(-num);
+                if (sign == '*') stack.offerFirst(stack.pollFirst() * num);
+                if (sign == '/') stack.offerFirst(stack.pollFirst() / num);
+                sign = s.charAt(i);
+                num = 0;
+            }
+            
+        }
+        for (int i : stack) {
+            res += i;
+        }
+        return res;
+    }
+}
+// ts&sc: O(n) 
+
+
+//优化版本，不用stack，只用sum和last去模拟stack做的事情。
+class Solution {
+    public int calculate(String s) {
+        int num = 0;
+        char operator = '+';
+        int last = 0, sum = 0;
+
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+
+            if (Character.isDigit(c)) {
+                num = num * 10 + (c - '0');
+            }
+
+            if (isOperator(c) || i == s.length() - 1) {
+                if (operator == '+') {
+                    sum += last;
+                    last = num;
+                }
+                else if (operator == '-') {
+                    sum += last;
+                    last = -num;
+                }
+                else if (operator == '*') last *= num;
+                else if (operator == '/') last /= num;
+
+                num = 0;
+                operator = c;
+            }
+        }
+
+        return sum += last;
+    }
+
+    private boolean isOperator(char c) {
+        return c == '+' || c == '-' || c == '*' || c == '/';
+    }
+}
+
+// TC: O(n), SC: O(1)
