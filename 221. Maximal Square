@@ -1,0 +1,34 @@
+Given an m x n binary matrix filled with 0's and 1's, find the largest square containing only 1's and return its area.
+
+//M[i][j] represnets the largest square of 1s in this binary matrix ending at i,j, including i and j.
+//base case: M[0][any] = matrix[0][any]  M[any][0] = matrix[any][0] 也就是matrix里的第一行和第一列，以他们为ending point无法向上和向左延伸得到更大的square。
+//induction rule:
+//M[i][j] = min(M[i][j - 1], M[i - 1][j], M[i - 1][j - 1]) + 1  if matrix[i][j] == 1
+//M[i][j] = 0                                                   else
+
+
+class Solution {
+    public int maximalSquare(char[][] matrix) {
+        if (matrix == null || matrix.length == 0) {
+            return 0;
+        }
+        int m = matrix.length;
+        int n = matrix[0].length;
+        int[][] dp = new int[m][n];
+        int maxSquareLength = 0;
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i == 0 || j == 0) {
+                    dp[i][j] = matrix[i][j] - '0';
+                } else if (matrix[i][j] == '1'){  
+                    dp[i][j] = Math.min(dp[i - 1][j], dp[i][j - 1]);
+                    dp[i][j] = Math.min(dp[i - 1][j - 1], dp[i][j]) + 1;
+ 
+                }
+                maxSquareLength = Math.max(maxSquareLength, dp[i][j]);
+            }
+        }
+        return maxSquareLength * maxSquareLength;
+    }
+}
