@@ -1,0 +1,67 @@
+Numbers can be regarded as the product of their factors.
+
+For example, 8 = 2 x 2 x 2 = 2 x 4.
+Given an integer n, return all possible combinations of its factors. You may return the answer in any order.
+
+Note that the factors should be in the range [2, n - 1].
+
+ 
+
+Example 1:
+
+Input: n = 1
+Output: []
+Example 2:
+
+Input: n = 12
+Output: [[2,6],[3,4],[2,2,3]]
+Example 3:
+
+Input: n = 37
+Output: []
+
+
+//先找到这个n的所有的factor，然后再用dfs遍历所有可能。
+
+class Solution {
+    public List<List<Integer>> getFactors(int n) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (n < 2) {
+            return res;
+        }
+        List<Integer> factors = getFactorOfN(n);
+        List<Integer> cur = new ArrayList<>();
+        helper(res, factors, cur, 0, n);
+        return res;
+    }
+    private void helper(List<List<Integer>> res, List<Integer> factors, List<Integer> cur, int startIndex, int target) {
+            if (startIndex == factors.size()) {
+            if (target == 1) {
+                res.add(new ArrayList<>(cur));
+            }
+            return;
+        }
+        helper(res, factors, cur, startIndex + 1, target); //不用当前因子，直接进入下一个因子
+
+        int size = cur.size();
+        int factor = factors.get(startIndex);
+        //使用当前因子
+        while (target % factor == 0) { //因子的重复使用，直到该因子不能再被 target 整除
+            cur.add(factor);
+            target /= factor;
+            helper(res, factors, cur, startIndex + 1, target);
+        }
+        cur.subList(size, cur.size()).clear();
+    }
+    
+
+    private List<Integer> getFactorOfN(int n) {
+        List<Integer> res = new ArrayList<>();
+        for (int i = n / 2; i > 1; i--) {
+            if (n % i == 0) {
+                res.add(i);
+            }
+        }
+        return res;
+    }
+}
