@@ -1,0 +1,45 @@
+Given two integer arrays inorder and postorder where inorder is the inorder traversal of a binary tree and postorder is the postorder traversal of the same tree, construct and return the binary tree.
+
+//通过map存储inorder对于的值和index，然后从postorder找root。用recursion递归不断缩小左子树的边界和右子树的边界进行reconstruct。
+
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        if (inorder == null || inorder.length == 0 || postorder == null || postorder.length == 0) {
+            return null;
+        }
+        Map<Integer, Integer> inMap = new HashMap<>();
+        for (int i = 0; i < inorder.length; i++) {
+            inMap.put(inorder[i], i);
+        }
+        return helper( 0, inorder.length - 1, postorder, 0, postorder.length - 1, inMap);
+    }
+
+    private TreeNode helper( int inLeft, int inRight, int[] post, int postLeft, int postRight, Map<Integer, Integer> inMap) {
+        if (inLeft > inRight) {
+            return null;
+        }
+        int rootVal = post[postRight];
+        TreeNode root = new TreeNode(rootVal);
+        int leftTreeSize = inMap.get(rootVal) - inLeft;
+
+        root.left = helper(inLeft, inLeft + leftTreeSize - 1, post, postLeft, postLeft + leftTreeSize - 1, inMap);
+        root.right = helper(inLeft + leftTreeSize + 1, inRight, post, postLeft + leftTreeSize, postRight - 1, inMap);
+        return root;
+    }
+}
