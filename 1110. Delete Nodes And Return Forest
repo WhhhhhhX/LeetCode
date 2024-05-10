@@ -1,0 +1,69 @@
+Given the root of a binary tree, each node in the tree has a distinct value.
+
+After deleting all nodes with a value in to_delete, we are left with a forest (a disjoint union of trees).
+
+Return the roots of the trees in the remaining forest. You may return the result in any order.
+
+ 
+
+Example 1:
+
+
+Input: root = [1,2,3,4,5,6,7], to_delete = [3,5]
+Output: [[1,2,null,4],[6],[7]]
+Example 2:
+
+Input: root = [1,2,4,null,3], to_delete = [3]
+Output: [[1,2,4]]
+
+
+//dfs，如果当前的节点需要删除，就return null，返回到上一层 root.left 或 root.right = null 就代表删除了
+
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+     public List<TreeNode> delNodes(TreeNode root, int[] to_delete) {
+        Set<Integer> toDeleteSet = new HashSet<>();
+        for (int delete : to_delete) {
+            toDeleteSet.add(delete);
+        }
+        
+        List<TreeNode> remainingForest = new ArrayList<>();
+        root = deleteHelper(root, toDeleteSet, remainingForest);
+        if (root != null) {
+            remainingForest.add(root);
+        }
+        return remainingForest;
+    }
+
+    private TreeNode deleteHelper(TreeNode node, Set<Integer> toDeleteSet, List<TreeNode> remainingForest) {
+        if (node == null) {
+            return null;
+        }
+        
+        node.left = deleteHelper(node.left, toDeleteSet, remainingForest);
+        node.right = deleteHelper(node.right, toDeleteSet, remainingForest);
+        
+        if (toDeleteSet.contains(node.val)) {
+            if (node.left != null) remainingForest.add(node.left);
+            if (node.right != null) remainingForest.add(node.right);
+            return null;  // return null to the parent node since this node is deleted
+        }
+        
+        return node; // return the unchanged node if not deleted
+    }
+}
