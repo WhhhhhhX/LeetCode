@@ -1,0 +1,50 @@
+There are n children standing in a line. Each child is assigned a rating value given in the integer array ratings.
+
+You are giving candies to these children subjected to the following requirements:
+
+Each child must have at least one candy.
+Children with a higher rating get more candies than their neighbors.
+Return the minimum number of candies you need to have to distribute the candies to the children.
+
+ 
+
+Example 1:
+
+Input: ratings = [1,0,2]
+Output: 5
+Explanation: You can allocate to the first, second and third child with 2, 1, 2 candies respectively.
+
+//memorization
+//从左到右和从右到左去遍历，选择最大的
+
+class Solution {
+    public int candy(int[] ratings) {
+        if (ratings == null || ratings.length == 0) {
+            return 0;
+        }
+        if (ratings.length == 1) {
+            return 1;
+        }
+        int n = ratings.length;
+        int[] candyTobeGiven = new int[n];
+        int res = 0;
+        candyTobeGiven[0] = 1;
+        for (int i = 1; i < n; i++) {
+            if (ratings[i] > ratings[i - 1]) {
+                candyTobeGiven[i] = candyTobeGiven[i - 1] + 1;
+            } else {
+                candyTobeGiven[i] = 1;
+            }
+        }
+        for (int i = n - 2; i >= 0; i--) {
+            if (ratings[i] > ratings[i + 1]) {
+                candyTobeGiven[i] = Math.max(candyTobeGiven[i + 1] + 1, candyTobeGiven[i]);
+            } 
+        }
+        for (int i : candyTobeGiven) {
+            res += i;
+        }
+
+        return res;
+    }
+}
