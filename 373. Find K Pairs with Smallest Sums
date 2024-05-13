@@ -1,0 +1,54 @@
+You are given two integer arrays nums1 and nums2 sorted in non-decreasing order and an integer k.
+
+Define a pair (u, v) which consists of one element from the first array and one element from the second array.
+
+Return the k pairs (u1, v1), (u2, v2), ..., (uk, vk) with the smallest sums.
+
+ 
+
+Example 1:
+
+Input: nums1 = [1,7,11], nums2 = [2,4,6], k = 3
+Output: [[1,2],[1,4],[1,6]]
+Explanation: The first 3 pairs are returned from the sequence: [1,2],[1,4],[1,6],[7,2],[7,4],[11,2],[7,6],[11,4],[11,6]
+
+
+这道题其实是前文 单链表的六大解题套路 中讲过的 23. 合并K个升序链表 的变体。
+
+怎么把这道题变成合并多个有序链表呢？就比如说题目输入的用例：
+
+
+nums1 = [1,7,11], nums2 = [2,4,6]
+组合出的所有数对儿这就可以抽象成三个有序链表：
+
+
+[1, 2] -> [1, 4] -> [1, 6]
+[7, 2] -> [7, 4] -> [7, 6]
+[11, 2] -> [11, 4] -> [11, 6]
+这三个链表中每个元素（数对之和）是递增的，所以就可以按照 23. 合并K个升序链表 的思路来合并，取出前 k 个作为答案即可。
+
+class Solution {
+    public List<List<Integer>> kSmallestPairs(int[] nums1, int[] nums2, int k) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (nums1 == null || nums1.length == 0 || nums2 == null || nums2.length == 0) {
+            return res;
+        }
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> (a[0] + a[1] - (b[0] + b[1])));
+        for (int i = 0; i < nums1.length; i++) {
+            pq.offer(new int[]{nums1[i], nums2[0], 0});
+        }
+        
+        while (!pq.isEmpty() && k > 0) {
+            List<Integer> cur = new ArrayList<>();
+            int[] curArr = pq.poll();
+            k--;
+            cur.add(curArr[0]);
+            cur.add(curArr[1]);
+            res.add(cur);
+            if (curArr[2] + 1 < nums2.length) {
+                pq.offer(new int[]{curArr[0], nums2[curArr[2] + 1], curArr[2] + 1});
+            }
+        }
+        return res;
+    }
+}
