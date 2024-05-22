@@ -1,0 +1,52 @@
+Given two integer arrays, preorder and postorder where preorder is the preorder traversal of a binary tree of distinct values and postorder is the postorder traversal of the same tree, reconstruct and return the binary tree.
+
+If there exist multiple answers, you can return any of them.
+
+/***
+1、首先把前序遍历结果的第一个元素或者后序遍历结果的最后一个元素确定为根节点的值。(代码选定preorder的第一个元素作为root)
+
+2、然后把前序遍历结果的第二个元素作为左子树的根节点的值。
+
+3、在后序遍历结果中寻找左子树根节点的值，从而确定了左子树的索引边界，进而确定右子树的索引边界，递归构造左右子树即可。
+***/
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public TreeNode constructFromPrePost(int[] preorder, int[] postorder) {
+        Map<Integer, Integer> posMap = new HashMap<>();
+        for (int i = 0; i < postorder.length; i++) {
+            posMap.put(postorder[i], i);
+        }
+        return helper(preorder, 0, preorder.length - 1, 0, postorder.length - 1, posMap);
+    }
+
+    private TreeNode helper(int[] preorder, int preLeft, int preRight, int posLeft, int posRight, Map<Integer, Integer> posMap) {
+        if (preLeft > preRight || posLeft > posRight) {
+            return null;
+        }
+        if (preLeft == preRight) {
+            return new TreeNode(preorder[preLeft]);
+        }
+        TreeNode root = new TreeNode(preorder[preLeft]);
+        int leftTreeRoot = preorder[preLeft + 1];
+        int indexInPos = posMap.get(leftTreeRoot);
+        int leftTreeSize = indexInPos - posLeft + 1;
+        root.left = helper(preorder, preLeft + 1, preLeft + leftTreeSize, posLeft, indexInPos, posMap);
+        root.right = helper(preorder, preLeft + leftTreeSize + 1, preRight, indexInPos + 1, posRight - 1, posMap);
+        return root;
+    }
+}
