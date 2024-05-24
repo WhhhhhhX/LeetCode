@@ -1,0 +1,42 @@
+Given the root of a binary tree and an array of TreeNode objects nodes, return the lowest common ancestor (LCA) of all the nodes in nodes. All the nodes will exist in the tree, and all values of the tree's nodes are unique.
+
+Extending the definition of LCA on Wikipedia: "The lowest common ancestor of n nodes p1, p2, ..., pn in a binary tree T is the lowest node that has every pi as a descendant (where we allow a node to be a descendant of itself) for every valid i". A descendant of a node x is a node y that is on the path from node x to some leaf node.
+
+
+/***
+对于多个node在二叉树里找lca，我们可以先把它存入set中(optimization for look up operation)。之后在每次递归的时候只需要判断当前root是否在set里就好了，在就代表找到root，不在就代表没找到。其他的部分是一样的
+***/
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode[] nodes) {
+        if (root == null) {
+            return root;
+        }
+        Set<TreeNode> set = new HashSet<>();
+        for (TreeNode node : nodes) {
+            set.add(node);
+        }
+        return helper(root, set);
+    }
+    private TreeNode helper(TreeNode root, Set<TreeNode> set) {
+        if (root == null || set.contains(root)) {
+            return root;
+        }
+        TreeNode left = helper(root.left, set);
+        TreeNode right = helper(root.right, set);
+
+        if (left != null && right != null) {
+            return root;
+        }
+        return left == null ? right : left;
+    }
+}
