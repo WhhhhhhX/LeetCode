@@ -1,0 +1,47 @@
+Given the root of a binary tree, return the lowest common ancestor (LCA) of two given nodes, p and q. If either node p or q does not exist in the tree, return null. All values of the nodes in the tree are unique.
+
+According to the definition of LCA on Wikipedia: "The lowest common ancestor of two nodes p and q in a binary tree T is the lowest node that has both p and q as descendants (where we allow a node to be a descendant of itself)". A descendant of a node x is a node y that is on the path from node x to some leaf node.
+
+
+//这道题两个node不一定在tree里，那这就要求我们需要遍历整个树，才能决定是否有lca。在递归的后序位置这个框架可以遍历整个tree
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    private boolean pFound = false;
+    private boolean qFound = false;
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null) {
+            return null;
+        }
+        TreeNode lca = helper(root, p, q);
+        return (pFound && qFound) ? lca : null;
+    }
+    private TreeNode helper(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null) {
+            return null;
+        }
+        TreeNode left = helper(root.left, p, q);
+        TreeNode right = helper(root.right, p, q);
+        if (root == p) {
+            pFound = true;
+            return root;
+        }
+        if (root == q) {
+            qFound = true;
+            return root;
+        }
+        if (left != null && right != null) {
+            return root;
+        } else {
+            return left != null ? left : right;
+        }
+    }
+}
