@@ -1,0 +1,75 @@
+Given the root of a complete binary tree, return the number of the nodes in the tree.
+
+According to Wikipedia, every level, except possibly the last, is completely filled in a complete binary tree, and all nodes in the last level are as far left as possible. It can have between 1 and 2h nodes inclusive at the last level h.
+
+Design an algorithm that runs in less than O(n) time complexity.
+
+ 
+
+Example 1:
+
+
+Input: root = [1,2,3,4,5,6]
+Output: 6
+Example 2:
+
+Input: root = []
+Output: 0
+Example 3:
+
+Input: root = [1]
+Output: 1
+ 
+
+Constraints:
+
+The number of nodes in the tree is in the range [0, 5 * 104].
+0 <= Node.val <= 5 * 104
+The tree is guaranteed to be complete.
+
+//完全二叉树比普通二叉树特殊，但又没有满二叉树那么特殊，计算它的节点总数，可以说是普通二叉树和完全二叉树的结合版
+//tc：O(logn * logn)
+//sc: O(logn)
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public int countNodes(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        return helper(root);
+    }
+    private int helper(TreeNode root) {
+        int hl = 0, hr = 0;
+        TreeNode leftNode = root;
+        TreeNode rightNode = root;
+        while (leftNode != null) {
+            hl++;
+            leftNode = leftNode.left;
+        }
+        while (rightNode != null) {
+            hr++;
+            rightNode = rightNode.right;
+        }
+
+        if (hl == hr) { //满二叉树计算node方式
+            return (int)Math.pow(2, hl) - 1;
+        }
+        return 1 + helper(root.left) + helper(root.right); //普通二叉树计算方式
+    }
+}
+
+
