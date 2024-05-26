@@ -1,0 +1,64 @@
+You are given the root of a binary tree where each node has a value in the range [0, 25] representing the letters 'a' to 'z'.
+
+Return the lexicographically smallest string that starts at a leaf of this tree and ends at the root.
+
+As a reminder, any shorter prefix of a string is lexicographically smaller.
+
+For example, "ab" is lexicographically smaller than "aba".
+A leaf of a node is a node that has no children.
+
+/***
+前文 手把手刷二叉树总结篇 说过二叉树的递归分为「遍历」和「分解问题」两种思维模式，这道题需要用到「遍历」的思维。
+
+代码看起来虽然多，但思路非常简单：用 path 维护递归遍历的路径，到达叶子节点的时候判断字典序最小的路径。
+
+不要忘了在叶子节点的时候也要正确维护 path 变量，而且要把 StringBuilder 中的字符串反转才是题目想要的答案。
+***/
+
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    String res = null;
+    public String smallestFromLeaf(TreeNode root) {
+        if (root == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        helper(root, sb);
+        return res;
+    }
+    private void helper(TreeNode root, StringBuilder sb) {
+        if (root == null) {
+            return;
+        }
+        if (root.left == null && root.right == null) {
+            sb.append((char)('a' + root.val));
+            sb.reverse();
+            String temp = sb.toString();
+            if (res == null || res.compareTo(temp) > 0) {
+                res = temp;
+            }
+            sb.reverse();
+            sb.deleteCharAt(sb.length() - 1);
+            return;
+        }
+        sb.append((char)('a' + root.val));
+        helper(root.left, sb);
+        helper(root.right, sb);
+        sb.deleteCharAt(sb.length() - 1);
+    }
+}
