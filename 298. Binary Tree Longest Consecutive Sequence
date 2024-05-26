@@ -1,0 +1,56 @@
+Given the root of a binary tree, return the length of the longest consecutive sequence path.
+
+A consecutive sequence path is a path where the values increase by one along the path.
+
+Note that the path can start at any node in the tree, and you cannot go from a node to its parent in the path.
+
+ 
+
+Example 1:
+
+
+Input: root = [1,null,3,2,4,null,null,null,5]
+Output: 3
+Explanation: Longest consecutive sequence path is 3-4-5, so return 3.
+
+
+//遍历的过程中记录父节点的值和连续序列的长度，并更新全局最大值即可。
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    int res = 0;
+    public int longestConsecutive(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        helper(root, 1, Integer.MIN_VALUE);
+        return res;
+    }
+    private void helper(TreeNode root, int len, int parentVal) {
+        if (root == null) {
+            return;
+        }
+        if (parentVal + 1 == root.val) {
+            len++;
+        } else {
+            len = 1;
+        }
+        res = Math.max(res, len);
+        helper(root.left, len, root.val);
+        helper(root.right, len, root.val);
+    }
+}
