@@ -1,0 +1,76 @@
+Given the root of a binary tree, return the maximum width of the given tree.
+
+The maximum width of a tree is the maximum width among all levels.
+
+The width of one level is defined as the length between the end-nodes (the leftmost and rightmost non-null nodes), where the null nodes between the end-nodes that would be present in a complete binary tree extending down to that level are also counted into the length calculation.
+
+It is guaranteed that the answer will in the range of a 32-bit signed integer.
+
+ 
+
+Example 1:
+
+
+Input: root = [1,3,2,5,3,null,9]
+Output: 4
+Explanation: The maximum width exists in the third level with length 4 (5,3,null,9).
+
+//只需要用一个class 去记录当前这个node的索引index就好，然后对于tree的每一层遍历，记录一个起始index和终止index，每遍历完一层相减更新max即可。
+
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+
+class Solution {
+    int max = 0;
+    class Node {
+        TreeNode node;
+        int index;
+        public Node(TreeNode node, int index) {
+            this.index = index;
+            this.node = node;
+        }
+    }
+    public int widthOfBinaryTree(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        Queue<Node> q = new LinkedList<>();
+        q.offer(new Node(root, 0));
+        while (!q.isEmpty()) {
+            int size = q.size();
+            int headIndex = -1;
+            int tailIndex = -1;
+            for (int i = 0; i < size; i++) {
+                Node cur = q.poll();
+                TreeNode curNode = cur.node;
+                int index = cur.index;
+                if (i == 0) {
+                    headIndex = index;
+                }
+                tailIndex = index;
+                if (curNode.left != null) {
+                    q.offer(new Node(curNode.left, 2 * index));
+                }
+                if (curNode.right != null) {
+                    q.offer(new Node(curNode.right, 2 * index + 1));
+                }
+            }
+            max = Math.max(max, tailIndex - headIndex + 1);
+        }
+        return max;
+    }
+}
