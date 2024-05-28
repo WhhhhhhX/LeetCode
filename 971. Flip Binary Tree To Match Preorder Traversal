@@ -1,0 +1,60 @@
+You are given the root of a binary tree with n nodes, where each node is uniquely assigned a value from 1 to n. You are also given a sequence of n values voyage, which is the desired pre-order traversal of the binary tree.
+
+Any node in the binary tree can be flipped by swapping its left and right subtrees. For example, flipping node 1 will have the following effect:
+
+
+Flip the smallest number of nodes so that the pre-order traversal of the tree matches voyage.
+
+Return a list of the values of all flipped nodes. You may return the answer in any order. If it is impossible to flip the nodes in the tree to make the pre-order traversal match voyage, return the list [-1].
+
+Example 1:
+
+
+Input: root = [1,2], voyage = [2,1]
+Output: [-1]
+Explanation: It is impossible to flip the nodes such that the pre-order traversal matches voyage.
+
+//用 traverse 函数遍历整棵二叉树，对比前序遍历结果，如果节点的值对不上，就无解；如果子树对不上 voyage，就尝试翻转子树。
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    private int index = 0;
+    List<Integer> res = new ArrayList<>();
+    public List<Integer> flipMatchVoyage(TreeNode root, int[] voyage) {
+        if (root == null) {
+            return res;
+        }
+        helper(root, voyage);
+        return res;
+    }
+    private void helper(TreeNode root, int[] voyage) {
+        if (root == null|| (res.size() != 0 && res.get(0) == -1)) {
+            return;
+        } 
+        if (root.val != voyage[index++]) {
+            res = new ArrayList<>(Arrays.asList(-1));
+            return;
+        } else if (root.left != null && root.left.val != voyage[index]) { //这里本来应该反转左右子树，但我们可以通过先遍历右子树再左子树来模拟翻转。
+            res.add(root.val);
+            helper(root.right, voyage);
+            helper(root.left, voyage);
+        } else {
+            helper(root.left, voyage);
+            helper(root.right, voyage);
+        }
+    }
+}
