@@ -1,0 +1,107 @@
+Given the root of a binary tree, calculate the vertical order traversal of the binary tree.
+
+For each node at position (row, col), its left and right children will be at positions (row + 1, col - 1) and (row + 1, col + 1) respectively. The root of the tree is at (0, 0).
+
+The vertical order traversal of a binary tree is a list of top-to-bottom orderings for each column index starting from the leftmost column and ending on the rightmost column. There may be multiple nodes in the same row and same column. In such a case, sort these nodes by their values.
+
+Return the vertical order traversal of the binary tree.
+
+ 
+
+Example 1:
+
+
+Input: root = [3,9,20,null,null,15,7]
+Output: [[9],[3,15],[20],[7]]
+Explanation:
+Column -1: Only node 9 is in this column.
+Column 0: Nodes 3 and 15 are in this column in that order from top to bottom.
+Column 1: Only node 20 is in this column.
+Column 2: Only node 7 is in this column.
+
+
+//先bfs进行level order 遍历，并把对应的存入map中，然后在post processing对map的key和对应的value的list进行从小到大sort
+
+//TC: O(nlogn) SC: O(n)
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    class Node {
+        int x;
+        int y;
+        TreeNode node;
+        public Node(TreeNode node, int x, int y) {
+            this.node = node;
+            this.x = x;
+            this.y = y;
+        }
+    }
+    public List<List<Integer>> verticalTraversal(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (root == null) {
+            return res;
+        }
+        Map<Integer, List<Node>> map = new HashMap<>();
+        Queue<Node> q = new LinkedList<>();
+        q.offer(new Node(root, 0, 0));
+        while (!q.isEmpty()) {
+            int size = q.size();
+            for (int i = 0; i < size; i++) {
+                Node curNode = q.poll();
+                TreeNode curTreeNode = curNode.node;
+              
+                if (!map.containsKey(curNode.y)) {
+                    map.put(curNode.y, new ArrayList<Node>());
+                }
+                map.get(curNode.y).add(curNode);
+
+                if (curTreeNode.left != null) {
+                    q.offer(new Node(curTreeNode.left, curNode.x + 1, curNode.y - 1));
+                }
+
+                if (curTreeNode.right != null) {
+                    q.offer(new Node(curTreeNode.right, curNode.x + 1, curNode.y + 1));
+                }
+            }
+        }
+        List<Integer> sortedKeys = new ArrayList<>(map.keySet());
+        Collections.sort(sortedKeys);
+        for (int key : sortedKeys) {
+            List<Node> nodes = map.get(key);
+            Collections.sort(nodes, new Comparator<Node>() {
+                @Override
+                public int compare(Node a, Node b) {
+                    if (a.x != b.x) {
+                        return a.x - b.x;
+                    } else if (a.y != b.y) {
+                        return a.y - b.y;
+                    } else {
+                        return a.node.val - b.node.val;
+                    }
+                }
+            });
+            List<Integer> values = new ArrayList<>();
+            for (Node node : nodes) {
+                values.add(node.node.val);
+            }
+            res.add(values);
+        }
+       
+        return res;
+    }
+}
+
