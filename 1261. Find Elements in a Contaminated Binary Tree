@@ -1,0 +1,73 @@
+Given a binary tree with the following rules:
+
+root.val == 0
+If treeNode.val == x and treeNode.left != null, then treeNode.left.val == 2 * x + 1
+If treeNode.val == x and treeNode.right != null, then treeNode.right.val == 2 * x + 2
+Now the binary tree is contaminated, which means all treeNode.val have been changed to -1.
+
+Implement the FindElements class:
+
+FindElements(TreeNode* root) Initializes the object with a contaminated binary tree and recovers it.
+bool find(int target) Returns true if the target value exists in the recovered binary tree.
+ 
+
+Example 1:
+
+
+Input
+["FindElements","find","find"]
+[[[-1,null,-1]],[1],[2]]
+Output
+[null,false,true]
+Explanation
+FindElements findElements = new FindElements([-1,null,-1]); 
+findElements.find(1); // return False 
+findElements.find(2); // return True 
+
+
+/***
+肯定是recursion遍历，因为题目说了左右两个subtree的处理方式不一样，所以在遍历的时候需要对左右子树分别处理。
+***/
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class FindElements {
+        Set<Integer> set;
+    public FindElements(TreeNode root) {
+        set = new HashSet<>();
+        if (root != null) {
+            root.val = 0;
+            set.add(0);
+        }
+        recover(root, set);
+    }
+    private void recover(TreeNode root, Set<Integer> set) {
+        if (root.left != null) {
+            root.left.val = 2 * root.val + 1;
+            set.add(root.left.val);
+            recover(root.left, set);
+        }
+        if (root.right != null) {
+            root.right.val = 2 * root.val + 2;
+            set.add(root.right.val);
+            recover(root.right, set);
+        }
+    }
+    
+    public boolean find(int target) {
+        return set.contains(target);
+    }
+}
