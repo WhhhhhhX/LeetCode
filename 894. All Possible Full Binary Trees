@@ -1,0 +1,73 @@
+Given an integer n, return a list of all possible full binary trees with n nodes. Each node of each tree in the answer must have Node.val == 0.
+
+Each element of the answer is the root node of one possible tree. You may return the final list of trees in any order.
+
+A full binary tree is a binary tree where each node has exactly 0 or 2 children.
+
+/***
+如果你想生成一棵 n 个节点的满二叉树，首先要固定根节点，然后组装左右子树，根节点加上左右子树节点之和应该等于 n。
+
+我们定义 helper 能够生成节点数为 n 的所有可能的二叉树，然后利用这个定义生成左右子树，然后通过子树组装出结果即可。
+***/
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    // 备忘录，记录 n 个节点能够组合成的所有可能二叉树
+    List<TreeNode>[] memo;
+    public List<TreeNode> allPossibleFBT(int n) {
+        // 题目描述的满二叉树不可能是偶数个节点
+        if (n % 2 == 0) {
+            return new LinkedList<>();
+        }
+        memo = new LinkedList[n + 1];
+        return helper(n);
+    }
+    
+    // 定义：输入一个 n，生成节点树为 n 的所有可能的满二叉树
+    private List<TreeNode> helper(int n) {
+        List<TreeNode> cur = new LinkedList<>();
+        if (n == 1) {
+            cur.add(new TreeNode(0));
+            return cur;
+        }
+        if (memo[n] != null) {
+            // 避免冗余计算
+            return memo[n];
+        }
+
+        for (int i = 1; i < n; i += 2) {
+            int remainNode = n - i - 1;
+            // 利用函数定义，生成左右子树
+            List<TreeNode> leftTree = helper(i);
+            List<TreeNode> rightTree = helper(remainNode);
+            // 左右子树的不同排列也能构成不同的二叉树
+            for (TreeNode left : leftTree) {
+                for (TreeNode right : rightTree) {
+                    // 生成根节点
+                    TreeNode root = new TreeNode(0);
+                    // 组装出一种可能的二叉树形状
+                    root.left = left;
+                    root.right = right;
+                    cur.add(root);
+                }
+            }
+        }
+        // 存入备忘录
+        memo[n] = cur;
+        return cur;
+    }
+}
