@@ -1,0 +1,45 @@
+Given an array of integers nums and an integer k, return the total number of subarrays whose sum equals to k.
+
+A subarray is a contiguous non-empty sequence of elements within an array.
+
+ 
+
+Example 1:
+
+Input: nums = [1,1,1], k = 2
+Output: 2
+Example 2:
+
+Input: nums = [1,2,3], k = 3
+Output: 2
+
+/***
+首先我们应该考虑怎么找到subarray sum，显而易见可以用prefix sum来求，prefixsum[2] - prefixsum[0] = target，有了这个公式，那我们可以转变思维，现在有了prefixsum[2] 和target，怎么样才能
+得到subarray sum = target呢，那就可以用 prefixsum[2]减去 之前求得的哪个prefixsum = target，那现在既然有了prefixsum[2]和target，那就用prefixsum[2] - target去看prefixsum[0]有几个就向res里加几个就好了。
+那基于这个思维，我们需要一个map来映射，key = prefixsum, val = frequency of each prefixsum.
+***/
+//tc/sc : O(n)
+
+class Solution {
+    public int subarraySum(int[] nums, int k) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, 1);
+        int prefixSum = 0;
+        int res = 0;
+        for (int i = 0; i < nums.length; i++) {
+            prefixSum += nums[i];
+            if (map.containsKey(prefixSum - k)) {
+                res += map.get(prefixSum - k);
+            }
+            map.put(prefixSum, map.getOrDefault(prefixSum, 0) + 1);
+        }
+        return res;
+    }
+}
+
+
+//对于这类题，我们也可以优化一下空间复杂度，使其为O(1),就是用sliding window（双指针）
+
