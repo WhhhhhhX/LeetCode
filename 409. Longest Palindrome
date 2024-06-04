@@ -1,0 +1,49 @@
+Given a string s which consists of lowercase or uppercase letters, return the length of the longest 
+palindrome
+ that can be built with those letters.
+
+Letters are case sensitive, for example, "Aa" is not considered a palindrome.
+
+ 
+
+Example 1:
+
+Input: s = "abccccdd"
+Output: 7
+Explanation: One longest palindrome that can be built is "dccaccd", whose length is 7.
+Example 2:
+
+Input: s = "a"
+Output: 1
+Explanation: The longest palindrome that can be built is "a", whose length is 1.
+
+/***
+当遇到这种题，不是让你真的去找怎么组成回文，而是有个潜规则就是一个回文无非就是偶数字母的个数 + 一个奇数字母的个数，把奇数放中间就能形成回文
+ex： s="bbbaaaaannsss" 那就是 偶数个nn肯定在结果里，然后有三个出现过奇数次的字母b a s，那我肯定要选择出现最多次数的a放在中间来和nn组成回文，然后b和s各要两个把他们组成偶数来放在最后的res里==> 对应line 42
+***/
+
+class Solution {
+    public int longestPalindrome(String s) {
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+        Map<Character, Integer> map = new HashMap<>();
+        int res = 0;
+        int oddNum = 0;
+        for (char c : s.toCharArray()) {
+            map.put(c, map.getOrDefault(c, 0) + 1);
+            if (map.get(c) % 2 == 1) {
+                oddNum++;
+            } else {
+                oddNum--;
+            }
+        }
+        if (oddNum > 1) {
+            return s.length() - oddNum + 1; //讲aaaaa 和 bbb 和sss各减去1个成为偶数个，然后还要+1，因为我决定把aaaaa放在中间组成最长回文
+        } else {
+            return s.length();
+        }
+        
+    }
+}
+
