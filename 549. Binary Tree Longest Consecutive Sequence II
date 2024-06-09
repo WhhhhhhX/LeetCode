@@ -1,0 +1,86 @@
+Given the root of a binary tree, return the length of the longest consecutive path in the tree.
+
+A consecutive path is a path where the values of the consecutive nodes in the path differ by one. This path can be either increasing or decreasing.
+
+For example, [1,2,3,4] and [4,3,2,1] are both considered valid, but the path [1,2,4,3] is not valid.
+On the other hand, the path can be in the child-Parent-child order, where not necessarily be parent-child order.
+
+
+/***
+首先，题目说的这个「连续序列」可以分解成两个序列：一半是「递增序列」，一半是「递减序列」。
+
+那么我们想一想，如果你站在一个节点上，如何计算通过这个节点的最长「连续序列」？或者说你需要知道哪些信息才能算出这个节点的最长「连续序列」？
+
+显然，你需要知道左右子树的最长「递增序列」和最长「递减序列」，你可以通过子树的递增/递减序列，加上根节点，就形成了题目要求的最长「连续序列」。
+
+明确了这个思路，我们可以定义一个函数 helper，它输入一个根节点，返回值是一个NodeInfo，包含左子树或者右子树的最长递增和递减长度：
+
+这样，就可以在每个节点的后序位置获取到它的左右子树的最长递增/递减序列的长度，进而可以计算出全局最长「连续序列」的长度。
+***/
+
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    class NodeInfo {
+        int longestIncreaseLen;
+        int longestDecreaseLen;
+
+        public NodeInfo(int i, int d) {
+            this.longestIncreaseLen = i;
+            this.longestDecreaseLen = d;
+        }
+
+    }
+    private int res = 0;
+    
+    public int longestConsecutive(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        helper(root);
+        return res;
+    }
+    private NodeInfo helper(TreeNode root) {
+        if (root == null) {
+            return new NodeInfo(0, 0);
+        }
+        NodeInfo left = helper(root.left);
+        NodeInfo right = helper(root.right);
+
+        int rootIncreaseLen = 1;
+        int rootDecreaseLen = 1;
+
+        if (root.left != null) {
+            if (root.left.val - 1 == root.val) {
+                rootIncreaseLen += left.longestIncreaseLen;
+            } else if (root.left.val + 1 == root.val) {
+                rootDecreaseLen += left.longestDecreaseLen;
+            }
+        }
+        if (root.right != null) {
+            if (root.right.val - 1 == root.val) {
+                rootIncreaseLen = Math.max(rootIncreaseLen, right.longestIncreaseLen + 1);
+            } else if (root.right.val + 1 == root.val) {
+                rootDecreaseLen = Math.max(rootDecreaseLen, right.longestDecreaseLen + 1);
+            }
+        }
+
+        res = Math.max(res, rootIncreaseLen + rootDecreaseLen - 1);
+        
+        return new NodeInfo(rootIncreaseLen, rootDecreaseLen);
+    }
+}
