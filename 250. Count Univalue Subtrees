@@ -1,0 +1,48 @@
+Given the root of a binary tree, return the number of uni-value 
+subtrees
+.
+
+A uni-value subtree means all nodes of the subtree have the same value.
+
+
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+public class Solution {
+    int count;
+    
+    public int countUnivalSubtrees(TreeNode root) {
+        count = 0;
+        helper(root);
+        return count;
+    }
+    
+    boolean helper(TreeNode root) {
+        if (root == null) return true;
+            
+        boolean left = helper(root.left);
+        boolean right = helper(root.right);
+        
+        if (left && right && 
+           (root.left == null || root.val == root.left.val) && 
+           (root.right == null || root.val == root.right.val)) {
+            count++;
+            return true;
+        }
+        
+        return false;
+    }
+}
