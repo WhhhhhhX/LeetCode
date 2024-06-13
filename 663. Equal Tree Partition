@@ -1,0 +1,47 @@
+Given the root of a binary tree, return true if you can partition the tree into two trees with equal sums of values after removing exactly one edge on the original tree.
+
+/***
+这个问题看起来难，实际上只要换个思路就变简单了。如果我知道了整棵树所有节点之和 treeSum，那么如果存在一棵和为 treeSum / 2 的子树，就说明这棵二叉树是可以分解成两部分的。
+
+计算一棵树的所有节点之和，等于左右子树的节点之和加上根节点，同时在后序遍历的位置记录子树的和即可
+***/
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public boolean checkEqualTree(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+        Set<Integer> sum = new HashSet<>();
+        int totalSum = helper(root.left, sum) + helper(root.right, sum) + root.val;
+        if (totalSum % 2 != 0) {
+            return false;
+        } else {
+            return sum.contains(totalSum / 2);
+        }
+    }
+    private int helper(TreeNode root, Set<Integer> sum) {
+        if (root == null) {
+            return 0;
+        }
+        int left = helper(root.left, sum);
+        int right = helper(root.right, sum);
+        int total = left + right + root.val;
+        sum.add(total);
+        return total;
+    }
+}
