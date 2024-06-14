@@ -1,0 +1,55 @@
+Given the root of a binary tree, find the maximum value v for which there exist different nodes a and b where v = |a.val - b.val| and a is an ancestor of b.
+
+A node a is an ancestor of b if either: any child of a is equal to b or any child of a is an ancestor of b.
+
+/***
+这个题就是变向让你找以当前root为根的左右子树的最大最小值，然后当前root 的值减去最大最小值，更新res，以此来进行遍历
+***/
+
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    class Node {
+        int min;
+        int max;
+        public Node(int min, int max) {
+            this.min = min;
+            this.max = max;
+        }
+    }
+    private int res = 0;
+    public int maxAncestorDiff(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        helper(root);
+        return res;
+    }
+    private Node helper(TreeNode root) {
+        if (root == null) {
+            return new Node(Integer.MAX_VALUE, Integer.MIN_VALUE);
+        }
+        Node left = helper(root.left);
+        Node right = helper(root.right);
+
+        int min = Math.min(root.val, Math.min(left.min, right.min));
+        int max = Math.max(root.val, Math.max(left.max, right.max));
+
+        res = Math.max(res, Math.max(root.val - min, max - root.val));
+        return new Node(min, max);
+    }
+}
