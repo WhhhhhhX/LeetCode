@@ -1,0 +1,69 @@
+Given the root of a binary tree, the depth of each node is the shortest distance to the root.
+
+Return the smallest subtree such that it contains all the deepest nodes in the original tree.
+
+A node is called the deepest if it has the largest depth possible among any node in the entire tree.
+
+The subtree of a node is a tree consisting of that node, plus the set of all descendants of that node.
+
+/***
+说到底，这道题就是让你求那些「最深」的叶子节点的最近公共祖先，可以看下前文 二叉树最近公共祖先。
+
+你想想，一个节点需要知道哪些信息，才能确定自己是最深叶子节点的最近公共祖先？
+
+它需要知道自己的左右子树的最大深度：如果左右子树一样深，那么当前节点就是最近公共祖先；如果左右子树不一样深，那么最深叶子节点的最近公共祖先肯定在左右子树上。
+
+所以我们新建一个 Result 类，存放左右子树的最大深度及叶子节点的最近公共祖先节点
+***/
+
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    class Node {
+        private TreeNode node;
+        private int depth;
+
+        public Node(TreeNode node, int depth) {
+            this.node = node;
+            this.depth = depth;
+        }
+    }
+    public TreeNode subtreeWithAllDeepest(TreeNode root) {
+        if (root == null) {
+            return root;
+        }
+        return maxDepth(root).node;
+    }
+    private Node maxDepth(TreeNode root) {
+        if (root == null) {
+            return new Node(null, 0);
+        }
+        Node left = maxDepth(root.left);
+        Node right = maxDepth(root.right);
+        if (left.depth == right.depth) {
+            // 当左右子树的最大深度相同时，这个根节点是新的最近公共祖先
+            // 以当前 root 节点为根的子树深度是子树深度 + 1
+            return new Node(root, left.depth + 1);
+        }
+        // 左右子树的深度不同，则最近公共祖先在 depth 较大的一边
+        Node res = left.depth > right.depth ? left : right;
+        // 正确维护二叉树的最大深度
+        res.depth++;
+
+        return res;
+    }
+}
