@@ -1,0 +1,53 @@
+You are given the root of a binary tree.
+
+A ZigZag path for a binary tree is defined as follow:
+
+Choose any node in the binary tree and a direction (right or left).
+If the current direction is right, move to the right child of the current node; otherwise, move to the left child.
+Change the direction from right to left or from left to right.
+Repeat the second and third steps until you can't move in the tree.
+Zigzag length is defined as the number of nodes visited - 1. (A single node has a length of 0).
+
+Return the longest ZigZag path contained in that tree.
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    private int res = 0;
+    public int longestZigZag(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        helper(root);
+        return res;
+    }
+
+    //返回int[]数组，index0的位置代表 从右到左方向的目前的路径长度，index1代表从左到右路径长度
+    private int[] helper(TreeNode root) {
+        if (root == null) {
+            return new int[]{-1, -1};
+        }
+        int[] left = helper(root.left);
+        int[] right = helper(root.right);
+
+        int rootPathLen1 = left[0] + 1;
+        int rootPathLen2 = right[1] + 1;
+
+        res = Math.max(res, Math.max(rootPathLen1, rootPathLen2));
+
+        return new int[]{rootPathLen2, rootPathLen1};
+    }
+}
