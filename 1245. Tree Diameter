@@ -1,0 +1,59 @@
+The diameter of a tree is the number of edges in the longest path in that tree.
+
+There is an undirected tree of n nodes labeled from 0 to n - 1. You are given a 2D array edges where edges.length == n - 1 and edges[i] = [ai, bi] indicates that there is an undirected edge between nodes ai and bi in the tree.
+
+Return the diameter of the tree.
+
+//对于这道题，我可能生成的是一个n-nary tree，所以我们为了找longest path in that tree， 我们只需要找到前两个最大的path的长度即可。
+
+class Solution {
+    private int res = 0;
+    public int treeDiameter(int[][] edges) {
+        if (edges.length == 0) {
+            return 0;
+        }
+        Map<Integer, List<Integer>> tree = new HashMap<>();
+        Set<Integer> visited = new HashSet<>();
+        
+        //build tree
+        for (int[] edge : edges) {
+            int a = edge[0];
+            int b = edge[1];
+            if (!tree.containsKey(a)) {
+                tree.put(a, new LinkedList<>());
+            }
+            if (!tree.containsKey(b)) {
+                tree.put(b, new LinkedList<>());
+            }
+            tree.get(a).add(b);
+            tree.get(b).add(a);
+        }
+        helper(edges[0][0], visited, tree);
+        return res;
+    }
+
+    //给定一个root，helper()会返回以这个经过这个root的众多subpath中最长的一条path的长度
+    private int helper(int root, Set<Integer> visited, Map<Integer, List<Integer>> tree) {
+        if (visited.contains(root)) {
+            return 0;
+        }
+        visited.add(root);
+        
+        //travers all child of cur root to find first longest and second longest path and add them together through the cur root.
+        int firstLongestPath = 0;
+        int secondLongestPath = 0;
+        for (int child : tree.get(root)) {
+            int childDepth = helper(child, visited, tree);
+            if (childDepth >= firstLongestPath) {
+                //先改变second，再改变first，反之则会出错。
+                secondLongestPath = firstLongestPath;
+                firstLongestPath = childDepth;
+            } else if (childDepth > secondLongestPath) {
+                secondLongestPath = childDepth;
+            }
+        }
+        res = Math.max(res, firstLongestPath + secondLongestPath);
+        
+        return firstLongestPath + 1;
+    }
+}
