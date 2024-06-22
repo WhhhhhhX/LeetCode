@@ -6,6 +6,9 @@ Return the minimum number of moves required to make every node have exactly one 
 
 /***
 如果一个节点的硬币个数是 x，无论是移出还是移入，把该节点的硬币个数变成 1 的最少移动次数必然是 abs(x - 1)。
+
+res += Math.abs(left) + Math.abs(right)：将左右子树多余或缺少的硬币移动到当前节点所需的次数。
+这里的 Math.abs(left) 表示从左子树将硬币移动到当前节点的次数，Math.abs(right) 表示从右子树将硬币移动到当前节点的次数。
 ***/
 
 
@@ -31,7 +34,7 @@ class Solution {
         helper(root);
         return res;
     }
-     // 定义：输入一棵二叉树，返回这棵二叉树中多出的硬币个数，返回负数代表缺少硬币
+     // 定义：输入一棵二叉树，返回这棵二叉树中多出的硬币个数，返回负数代表缺少硬币，并且能保证当前以当前根节点的二叉树的每个节点都是1个硬币
     private int helper(TreeNode root) {
         if (root == null) {
             return 0;
