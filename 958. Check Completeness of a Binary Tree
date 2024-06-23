@@ -1,0 +1,53 @@
+Given the root of a binary tree, determine if it is a complete binary tree.
+
+In a complete binary tree, every level, except possibly the last, is completely filled, and all nodes in the last level are as far left as possible. It can have between 1 and 2h nodes inclusive at the last level h.
+
+/***
+核心思想就是 当发现之前有null存在，将flag转为true，然后接下来还有非空节点，这时候就要return false
+***/
+
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public boolean isCompleteTree(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+        Queue<TreeNode> q = new LinkedList<>();
+        q.offer(root);
+        boolean flag = false;
+        while (!q.isEmpty()) {
+            TreeNode cur = q.poll();
+            if (cur.left == null) {
+                flag = true;
+            } else if (flag) {
+                return false;
+            } else {
+                q.offer(cur.left);
+            }
+
+            if (cur.right == null) {
+                flag = true;
+            } else if (flag) {
+                return false;
+            } else {
+                q.offer(cur.right);
+            }
+        }
+        return true;
+    }
+}
