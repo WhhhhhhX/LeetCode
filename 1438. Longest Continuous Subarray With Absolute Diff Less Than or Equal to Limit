@@ -1,0 +1,85 @@
+Given an array of integers nums and an integer limit, return the size of the longest non-empty subarray such that the absolute difference between any two elements of this subarray is less than or equal to limit.
+
+ 
+
+Example 1:
+
+Input: nums = [8,2,4,7], limit = 4
+Output: 2 
+Explanation: All subarrays are: 
+[8] with maximum absolute diff |8-8| = 0 <= 4.
+[8,2] with maximum absolute diff |8-2| = 6 > 4. 
+[8,2,4] with maximum absolute diff |8-2| = 6 > 4.
+[8,2,4,7] with maximum absolute diff |8-2| = 6 > 4.
+[2] with maximum absolute diff |2-2| = 0 <= 4.
+[2,4] with maximum absolute diff |2-4| = 2 <= 4.
+[2,4,7] with maximum absolute diff |2-7| = 5 > 4.
+[4] with maximum absolute diff |4-4| = 0 <= 4.
+[4,7] with maximum absolute diff |4-7| = 3 <= 4.
+[7] with maximum absolute diff |7-7| = 0 <= 4. 
+Therefore, the size of the longest subarray is 2.
+
+/***
+对于这道题，它的本质就是需要你去找当前sliding window中的最大值和最小值，然后看最大值和最小值相减是否符合limit！！！
+***/
+
+
+//keep two queue: max queue and min queue for current sliding window
+//TC: O(n)
+class Solution {
+    public int longestSubarray(int[] nums, int limit) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int i = 0;
+        int j;
+        Deque<Integer> maxQ = new ArrayDeque<>();
+        Deque<Integer> minQ = new ArrayDeque<>();
+        for (j = 0; j < nums.length; j++) {
+            while (!maxQ.isEmpty() && maxQ.peekLast() < nums[j]) {
+                maxQ.pollLast();
+            }
+            maxQ.offerLast(nums[j]);
+
+            while (!minQ.isEmpty() && minQ.peekLast() > nums[j]) {
+                minQ.pollLast();
+            }
+            minQ.offerLast(nums[j]);
+
+            if (maxQ.peekFirst() - minQ.peekFirst() > limit) {
+                if (maxQ.peekFirst() == nums[i]) {
+                    maxQ.pollFirst();
+                } else if (minQ.peekFirst() == nums[i]) {
+                    minQ.pollFirst();
+                }
+                i++;
+            }
+        }
+        return j - i;
+    }
+}
+
+
+//第二种遍历数组并找当前最大最小值的方法： treemap
+//TC: O(nlogn)
+class Solution {
+    public int longestSubarray(int[] nums, int limit) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+        int i = 0;
+        int j;
+        for (j = 0; j < nums.length; j++) {
+            map.put(nums[j], map.getOrDefault(nums[j], 0) + 1);
+            if (map.lastKey() - map.firstKey() > limit) {
+                map.put(nums[i], map.get(nums[i]) - 1);
+                if (map.get(nums[i]) == 0) {
+                    map.remove(nums[i]);
+                }
+                i++;
+            }
+        }
+        return j - i;
+    }
+}
