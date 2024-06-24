@@ -1,0 +1,76 @@
+Design an algorithm to encode an N-ary tree into a binary tree and decode the binary tree to get the original N-ary tree. An N-ary tree is a rooted tree in which each node has no more than N children. Similarly, a binary tree is a rooted tree in which each node has no more than 2 children. There is no restriction on how your encode/decode algorithm should work. You just need to ensure that an N-ary tree can be encoded to a binary tree and this binary tree can be decoded to the original N-nary tree structure.
+
+Nary-Tree input serialization is represented in their level order traversal, each group of children is separated by the null value (See following example).
+
+
+class Pair {
+    public Node ntNode;
+    public TreeNode btNode;
+
+    public Pair(Node ntNode, TreeNode btNode) {
+        this.btNode = btNode;
+        this.ntNode = ntNode;
+    }
+}
+
+class Codec {
+    // Encodes an n-ary tree to a binary tree.
+    public TreeNode encode(Node root) {
+        if (root == null) {
+            return null;
+        }
+        // 二叉树的根节点
+        TreeNode btRoot = new TreeNode(root.val);
+        Queue<Pair> q = new LinkedList<>();
+        q.offer(new Pair(root, btRoot));
+
+        while (!q.isEmpty()) {
+            Pair cur = q.poll();
+            TreeNode curBtNode = cur.btNode;
+            Node curNtNode = cur.ntNode;
+            // 虚拟节点，作为二叉树树枝的起点，便于处理
+            TreeNode dummy = new TreeNode(-1), p = dummy;
+
+            for (Node child : curNtNode.children) {
+                // 层序遍历，下一层的节点入队
+                TreeNode newBtNode = new TreeNode(child.val);
+                q.offer(new Pair(child, newBtNode));
+                // 同时把下一层的节点都穿在二叉树节点的右侧树枝上
+                p.right = newBtNode;
+                p = p.right;
+            }
+            // 把这个树枝挂在父节点的左子树上
+            curBtNode.left = dummy.right;
+        }
+
+        return btRoot;
+    }
+
+    // Decodes your binary tree to an n-ary tree.
+    public Node decode(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+        // N 叉树的根节点
+        Node ntRoot = new Node(root.val, new ArrayList<>());
+        Queue<Pair> q = new LinkedList<>();
+        q.offer(new Pair(ntRoot, root));
+
+        while (!q.isEmpty()) {
+            Pair cur = q.poll();
+            TreeNode curBtNode = cur.btNode;
+            Node curNtNode = cur.ntNode;
+
+            ArrayList<Node> children = new ArrayList<>();
+            // 挂在左子树上的树枝上的节点就是 n 叉树的孩子节点
+            for (TreeNode p = curBtNode.left; p != null; p = p.right) {
+                Node newNtNode = new Node(p.val);
+                // 将子节点入队
+                q.offer(new Pair(newNtNode, p));
+                children.add(newNtNode);
+            }
+            curNtNode.children = children;
+        }
+        return ntRoot;
+    }
+}
