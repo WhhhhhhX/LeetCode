@@ -1,0 +1,74 @@
+A complete binary tree is a binary tree in which every level, except possibly the last, is completely filled, and all nodes are as far left as possible.
+
+Design an algorithm to insert a new node to a complete binary tree keeping it complete after the insertion.
+
+Implement the CBTInserter class:
+
+CBTInserter(TreeNode root) Initializes the data structure with the root of the complete binary tree.
+int insert(int v) Inserts a TreeNode into the tree with value Node.val == val so that the tree remains complete, and returns the value of the parent of the inserted TreeNode.
+TreeNode get_root() Returns the root node of the tree.
+
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class CBTInserter {
+    // 这个队列只记录完全二叉树底部可以进行插入的节点
+    private Queue<TreeNode> q = new LinkedList<>();
+    private TreeNode root;
+    public CBTInserter(TreeNode root) {
+        this.root = root;
+        // 进行普通的 BFS，目的是找到底部可插入的节点
+        Queue<TreeNode> temp = new LinkedList<>();
+        temp.offer(root);
+        while (!temp.isEmpty()) {
+            TreeNode cur = temp.poll();
+            if (cur.left != null) {
+                temp.offer(cur.left);
+            }
+            if (cur.right != null) {
+                temp.offer(cur.right);
+            }
+            if (cur.left == null || cur.right == null) {
+                q.offer(cur);
+            }
+        }
+    }
+    
+    public int insert(int val) {
+        TreeNode cur = new TreeNode(val);
+        TreeNode node = q.peek();
+        if (node.left == null) {
+            node.left = cur;
+        } else if (node.right == null) {
+            node.right = cur;
+            q.poll();
+        }
+// 新节点的左右节点也是可以插入的
+        q.offer(cur);
+        return node.val;
+    }
+    
+    public TreeNode get_root() {
+        return root;
+    }
+}
+
+/**
+ * Your CBTInserter object will be instantiated and called as such:
+ * CBTInserter obj = new CBTInserter(root);
+ * int param_1 = obj.insert(val);
+ * TreeNode param_2 = obj.get_root();
+ */
