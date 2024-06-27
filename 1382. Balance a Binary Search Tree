@@ -1,0 +1,52 @@
+Given the root of a binary search tree, return a balanced binary search tree with the same node values. If there is more than one answer, return any of them.
+
+A binary search tree is balanced if the depth of the two subtrees of every node never differs by more than 1.
+
+/***
+首先bst有个性质就是inorder traverse 是升序的，那我们就先得到sorted array。然后，找到mid中点，这就是整棵树的root，因为已经升序了，那用这个mid建出来的树一定是balanced bst。
+recursion的对这个preorder traverse自上而下进行构建tree。
+***/
+
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public TreeNode balanceBST(TreeNode root) {
+        List<TreeNode> sortedArr = new LinkedList<>();
+        inorderTraverse(root, sortedArr);
+        return helper(0, sortedArr.size() - 1, sortedArr);
+    }
+    private void inorderTraverse(TreeNode root, List<TreeNode> sortedArr) {
+        if (root == null) {
+            return;
+        }
+        inorderTraverse(root.left, sortedArr);
+
+        sortedArr.add(root);
+
+        inorderTraverse(root.right, sortedArr);
+    } 
+    private TreeNode helper(int start, int end, List<TreeNode> sortedArr) {
+        if (start > end) {
+            return null;
+        }
+        int mid = start + (end - start) / 2;
+        TreeNode root = sortedArr.get(mid);
+        root.left = helper(start, mid - 1, sortedArr);
+        root.right = helper(mid + 1, end, sortedArr);
+        return root;
+    }  
+}
