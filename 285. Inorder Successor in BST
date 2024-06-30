@@ -1,0 +1,66 @@
+Given the root of a binary search tree and a node p in it, return the in-order successor of that node in the BST. If the given node has no in-order successor in the tree, return null.
+
+The successor of a node p is the node with the smallest key greater than p.val.
+
+/***
+一个拍脑袋的解法就是去中序遍历所有节点获得有序结果，从而找到 successor，但这样时间复杂度是 O(N)，格局就低了。一般来说 BST 的算法都希望我们的复杂度保持在 O(logN)。
+现在你搜索到了 p 这个节点，然后怎么去找它的 successor？显然比 p 大的最小元素就是 p.right 子树中最左侧的那个元素。
+那如果 p.right 为空怎么办？此时比 p 大的最小元素就是 p 的父节点，我们要想办法通知 p 的父节点，让他老人家把自己作为结果返回。
+
+***/
+
+
+//方法1
+public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+        if (root == null) {
+            return null;
+        }
+
+        TreeNode successor = null;
+
+        if (root.val > p.val) {
+            // 父节点收到 null 的话说明自己是 successor
+            successor = inorderSuccessor(root.left, p);
+            if (successor == null) {
+                successor = root;
+            }
+        }
+        if (root.val < p.val) {
+            successor = inorderSuccessor(root.right, p);
+        }
+
+        if (root.val == p.val) {
+            // 我是目标节点，我的 successor 要么是右子树的最小节点，要么是父节点
+            successor = getMinNode(root.right);
+        }
+
+        return successor;
+    }
+
+
+
+//方法1的精简版
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    TreeNode res = null;
+    public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+        if (root == null) {
+            return null;
+        }
+        if (root.val > p.val) {
+            res = inorderSuccessor(root.left, p);
+            return res == null ? root : res;
+        } else {
+            res = inorderSuccessor(root.right, p);
+        }
+        return res;
+    }
+}
