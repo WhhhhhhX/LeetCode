@@ -1,0 +1,45 @@
+Given a non-empty special binary tree consisting of nodes with the non-negative value, where each node in this tree has exactly two or zero sub-node. If the node has two sub-nodes, then this node's value is the smaller value among its two sub-nodes. More formally, the property root.val = min(root.left.val, root.right.val) always holds.
+
+Given such a binary tree, you need to output the second minimum value in the set made of all the nodes' value in the whole tree.
+
+If no such second minimum value exists, output -1 instead.
+
+/***
+这道题的核心在于怎么找到第二小，从题目可得，root一定是最小的，那怎么找到第二小呢：
+有两种情况：1.root的值是其中一个子树的值，比如 root = 2， left = 2， right = 3，这时候right的值一定是right子树的最小值，可以作为全局第二小的candidate，那left怎么办呢，由于left 的val = root的val，我们
+需要继续递归找到left的子树的最小值，返回上来，这个也可以作为全局的第二小值，然后比较left子树的最小值和right子树的最小值谁更小即可。
+2.如果left = right = root，那就同时递归找左子树右子树的最小值，然后进行比较即可。
+***/
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public int findSecondMinimumValue(TreeNode root) {
+        if (root.left == null && root.right == null) {
+            return -1;
+        }
+        int left = (root.val == root.left.val) ? findSecondMinimumValue(root.left) : root.left.val;
+        int right = (root.val == root.right.val) ? findSecondMinimumValue(root.right) : root.right.val;
+
+        if (left == -1) {
+            return right;
+        } else if (right == -1) {
+            return left;
+        } else {
+            return Math.min(left,right);
+        }
+    }
+}
