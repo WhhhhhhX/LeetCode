@@ -1,0 +1,35 @@
+Given the root of a binary tree, return the same tree where every subtree (of the given tree) not containing a 1 has been removed.
+
+A subtree of a node node is node plus every node that is a descendant of node.
+
+ 
+
+Example 1:
+
+
+Input: root = [1,null,0,0,1]
+Output: [1,null,0,null,1]
+Explanation: 
+Only the red nodes satisfy the property "every subtree not containing a 1".
+The diagram on the right represents the answer.
+
+
+class Solution {
+    // 定义：输入一棵二叉树，返回的二叉树叶子节点都是 1
+    public TreeNode pruneTree(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+        // 二叉树递归框架
+        root.left = pruneTree(root.left);
+        root.right = pruneTree(root.right);
+
+        // 后序遍历位置，判断自己是否是值为 0 的叶子节点
+        if (root.val == 0 && root.left == null && root.right == null) {
+            // 返回值会被父节点接收，相当于把自己删掉了
+            return null;
+        }
+        // 如果不是，正常返回
+        return root;
+    }
+}
