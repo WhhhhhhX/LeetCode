@@ -1,0 +1,66 @@
+You are given a string s and two integers x and y. You can perform two types of operations any number of times.
+
+Remove substring "ab" and gain x points.
+For example, when removing "ab" from "cabxbae" it becomes "cxbae".
+Remove substring "ba" and gain y points.
+For example, when removing "ba" from "cabxbae" it becomes "cabxe".
+Return the maximum points you can gain after applying the above operations on s.
+
+ 
+
+Example 1:
+
+Input: s = "cdbcbbaaabab", x = 4, y = 5
+Output: 19
+Explanation:
+- Remove the "ba" underlined in "cdbcbbaaabab". Now, s = "cdbcbbaaab" and 5 points are added to the score.
+- Remove the "ab" underlined in "cdbcbbaaab". Now, s = "cdbcbbaa" and 4 points are added to the score.
+- Remove the "ba" underlined in "cdbcbbaa". Now, s = "cdbcba" and 5 points are added to the score.
+- Remove the "ba" underlined in "cdbcba". Now, s = "cdbc" and 5 points are added to the score.
+Total score = 5 + 4 + 5 + 5 = 19.
+Example 2:
+
+Input: s = "aabbaaxybbaabb", x = 5, y = 4
+Output: 20
+
+
+/***
+用greedy algorithm，既然要求最大，那就先从value较大的开始操作，然后再处理value小的那个值，
+所以可以2 phases对整个string进行遍历，每个阶段查找分别对应的ab/ba
+***/
+
+class Solution {
+    private String str;
+    public int maximumGain(String s, int x, int y) {
+        // Initialize the result
+        int res = 0;
+        str = s;
+        String pair = x > y ? "ab" : "ba";
+        res += removePairs(str, pair, Math.max(x, y));
+        res += removePairs(str, pair, Math.min(x, y));
+        return res;
+    }
+
+    private int removePairs(String s, String pair, int score) {
+        int res = 0;
+        Deque<Character> stack = new ArrayDeque<>();
+
+        // Iterate through the characters of the string
+        for (char c : s.toCharArray()) {
+            if (stack.size() > 0 && stack.peekFirst() == pair.charAt(0) && c == pair.charAt(1)) {
+                stack.pollFirst();  // Remove the last character from the stack
+                res += score;  // Increment the result by the score
+            } else {
+                stack.offerFirst(c);  // Add the current character to the stack
+            }
+        }
+
+        // Update the string
+        StringBuilder sb = new StringBuilder();
+        for (char c : stack) {   
+            sb.append(c);
+        }
+        str = sb.toString();
+        return res;
+    }
+}
