@@ -1,0 +1,92 @@
+You are given the head of a singly linked-list. The list can be represented as:
+
+L0 → L1 → … → Ln - 1 → Ln
+Reorder the list to be on the following form:
+
+L0 → Ln → L1 → Ln - 1 → L2 → Ln - 2 → …
+You may not modify the values in the list's nodes. Only nodes themselves may be changed.
+
+//找中点+ stack
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public void reorderList(ListNode head) {
+        if (head == null) {
+            return;
+        }
+        ListNode slow = head;
+        ListNode fast = head;
+        
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        
+        Deque<ListNode> stack = new ArrayDeque<>();
+        ListNode current = slow.next;
+        slow.next = null; // 断开链表
+        while (current != null) {
+            stack.push(current);
+            current = current.next;
+        }
+
+        ListNode first = head;
+        while (!stack.isEmpty()) {
+            ListNode next = first.next;
+            ListNode nodeFromStack = stack.pop();
+            first.next = nodeFromStack;
+            nodeFromStack.next = next;
+            first = next;
+        }
+        
+    }
+}
+
+//纯用stack
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public void reorderList(ListNode head) {
+        if (head == null) {
+            return;
+        }
+        Deque<ListNode> stack = new ArrayDeque<>();
+        ListNode p = head;
+        while (p != null) {
+            stack.offerFirst(p);
+            p = p.next;
+        }
+        p = head;
+        while (p != null) {
+            ListNode next = p.next;
+            ListNode lastNode = stack.pollFirst();
+
+            if (lastNode == next || lastNode.next == next) {
+                lastNode.next = null;
+                break;
+            }
+
+            p.next = lastNode;
+            lastNode.next = next;
+            p = next;
+        }
+        return;
+    }
+}
