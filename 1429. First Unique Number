@@ -1,0 +1,41 @@
+You have a queue of integers, you need to retrieve the first unique integer in the queue.
+
+Implement the FirstUnique class:
+
+FirstUnique(int[] nums) Initializes the object with the numbers in the queue.
+int showFirstUnique() returns the value of the first unique integer of the queue, and returns -1 if there is no such integer.
+void add(int value) insert value to the queue.
+
+/***
+首先我们要按顺序fifo来找，对吧，那就需要queue或者linkedlist，其次我们还需要知道每个元素对应的个数，然后用lookup operation来查询，那就需要map
+***/
+
+class FirstUnique {
+    Map<Integer, Integer> map;
+    Queue<Integer> q;
+    
+    public FirstUnique(int[] nums) {
+        q = new LinkedList<>();
+        map = new HashMap<>();
+
+        for (int num : nums) {
+            add(num);
+        }
+    }
+    
+    public int showFirstUnique() {
+        // 移除所有不唯一的元素
+        while (!q.isEmpty() && map.get(q.peek()) > 1) {
+            q.poll();
+        }
+        // 返回队列头部的第一个唯一值
+        return q.isEmpty() ? -1 : q.peek();
+    }
+    
+    public void add(int value) {
+        // 无论值是否存在于 map 中，都将其添加到队列中
+        q.offer(value);
+        // 更新 map 中的计数
+        map.put(value, map.getOrDefault(value, 0) + 1);
+    }
+}
