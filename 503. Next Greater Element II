@@ -1,0 +1,28 @@
+Given a circular integer array nums (i.e., the next element of nums[nums.length - 1] is nums[0]), return the next greater number for every element in nums.
+
+The next greater number of a number x is the first greater number to its traversing-order next in the array, which means you could search circularly to find its next greater number. If it doesn't exist, return -1 for this number.
+
+/***
+记住，对于环形数组，我们一般是通过 % 运算符求模（余数），来模拟环形特效！
+有了思路，最简单的实现方式当然可以把这个双倍长度的数组构造出来，然后套用算法模板。但是，我们可以不用构造新数组，而是利用循环数组的技巧来模拟数组长度翻倍的效果 i.e. i % n
+***/
+
+class Solution {
+    public int[] nextGreaterElements(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return nums;
+        }
+        int n = nums.length;
+        int[] res = new int[n];
+        Deque<Integer> stk = new ArrayDeque<>();
+        
+        for (int i = 2 * n - 1; i >= 0; i--) {
+            while (!stk.isEmpty() && stk.peekFirst() <= nums[i % n]) {
+                stk.pollFirst();
+            }
+            res[i % n] = stk.isEmpty() ? -1 : stk.peekFirst();
+            stk.offerFirst(nums[i % n]);
+        }
+        return res;
+    }
+}
