@@ -1,0 +1,50 @@
+A swap is defined as taking two distinct positions in an array and swapping the values in them.
+
+A circular array is defined as an array where we consider the first element and the last element to be adjacent.
+
+Given a binary circular array nums, return the minimum number of swaps required to group all 1's present in the array together at any location.
+
+ 
+
+Example 1:
+
+Input: nums = [0,1,0,1,1,0,0]
+Output: 1
+Explanation: Here are a few of the ways to group all the 1's together:
+[0,0,1,1,1,0,0] using 1 swap.
+[0,1,1,1,0,0,0] using 1 swap.
+[1,1,0,0,0,0,1] using 2 swaps (using the circular property of the array).
+There is no way to group all 1's together with 0 swaps.
+Thus, the minimum number of swaps required is 1.
+
+/***
+思考：
+这道题的最终目的要求我们吧所有的1放在一起，那我们可以这么想：把以所有的1的size当作一个window size，然后去sliding window去找以这个size的并且这里面包含最多的1的这么一个subarray，
+那在这个subarray里剩余不是1的地方就要被swap过来1去填上。
+那么就需要用sliding window去实现。
+***/
+
+class Solution {
+    public int minSwaps(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int totalOneNum = 0;
+        int curOneNum = 0;
+        int maxWindowOneNum = 0;
+        for (int i : nums) {
+            totalOneNum += i;
+        }
+        int start = 0;
+        int len = nums.length;
+        for (int end = 0; end < 2 * len - 1; end++) {
+            curOneNum += nums[end % len];
+            if (end - start + 1 > totalOneNum) {
+                curOneNum -= nums[start % len];
+                start++;
+            }
+            maxWindowOneNum = Math.max(maxWindowOneNum, curOneNum);
+        }
+        return totalOneNum - maxWindowOneNum;
+    }
+}
