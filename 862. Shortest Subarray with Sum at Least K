@@ -1,0 +1,44 @@
+Given an integer array nums and an integer k, return the length of the shortest non-empty subarray of nums with a sum of at least k. If there is no such subarray, return -1.
+
+A subarray is a contiguous part of an array.
+
+ 
+
+Example 1:
+
+Input: nums = [1], k = 1
+Output: 1
+
+
+//思考：
+/***
+对于这道题，首先是要找最短的subarray使其sum大于k，那么第一个想到的就是sliding window，通过sum 和k的大小关系来缩小这个window，其次是要找sum，我们可以联想到prefixsum比较快捷方便，
+最后，既然是prefixsum，那肯定是sum进行相减，那么肯定是先找到最小的，然后逐步缩小subarray的长度，那么可以用monotonic queue来做到这一点，综合三点即可写出答案。
+***/
+
+class Solution {
+    public int shortestSubarray(int[] nums, int k) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        Deque<Integer> stk = new ArrayDeque<>();
+        long[] prefixSum = new long[nums.length + 1];
+        prefixSum[0] = 0;
+        for (int i = 1; i <= nums.length; i++) {
+            prefixSum[i] = prefixSum[i - 1] + nums[i - 1];
+        }
+        int res = Integer.MAX_VALUE;
+        for (int end = 0; end < prefixSum.length; end++) {
+            while (!stk.isEmpty() && prefixSum[end] <= prefixSum[stk.peekLast()]) {
+                stk.pollLast();
+            }
+            stk.offerLast(end);
+            
+            while (!stk.isEmpty() && prefixSum[end] - prefixSum[stk.peekFirst()] >= k) {
+                res = Math.min(res, end - stk.pollFirst());
+            }
+            
+        }
+        return res == Integer.MAX_VALUE ? -1 : res;
+    }
+}
