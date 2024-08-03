@@ -1,0 +1,59 @@
+Given a circular integer array nums of length n, return the maximum possible sum of a non-empty subarray of nums.
+
+A circular array means the end of the array connects to the beginning of the array. Formally, the next element of nums[i] is nums[(i + 1) % n] and the previous element of nums[i] is nums[(i - 1 + n) % n].
+
+A subarray may only include each element of the fixed buffer nums at most once. Formally, for a subarray nums[i], nums[i + 1], ..., nums[j], there does not exist i <= k1, k2 <= j with k1 % n == k2 % n.
+
+ 
+
+Example 1:
+
+Input: nums = [1,-2,3,-2]
+Output: 3
+Explanation: Subarray [3] has maximum sum 3.
+
+
+//如果是给定的数组中存在负数情况，不能用sliding window，能用sliding window的情况一定是这个window里加元素和一直是调调增大或者减小的，如果有负数的情况下，和会有时候增大有时候减小，这样就会导致sliding window的答案
+//不一定正确。
+
+//所以既然sum就要用到prefix sum，然后用单调栈模拟sliding window去找答案。
+
+class Solution {
+    public int maxSubarraySumCircular(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        
+        int n = nums.length;
+        int[] preSum = new int[2 * n + 1];
+        preSum[0] = 0;
+        
+        // 计算前缀和
+        for (int i = 1; i < preSum.length; i++) {
+            preSum[i] = preSum[i - 1] + nums[(i - 1) % n];
+        }
+        
+        Deque<Integer> dq = new ArrayDeque<>();
+        dq.offerLast(0);
+        int res = Integer.MIN_VALUE;
+        
+        for (int i = 1; i < preSum.length; i++) {
+            // 移除不在有效窗口范围内的索引
+            if (dq.peekFirst() < i - n) {
+                dq.pollFirst();
+            }
+            
+            // 计算当前最大子数组和
+            res = Math.max(res, preSum[i] - preSum[dq.peekFirst()]);
+            
+            // 保持队列中的前缀和索引递增
+            while (!dq.isEmpty() && preSum[dq.peekLast()] >= preSum[i]) {
+                dq.pollLast();
+            }
+            
+            dq.offerLast(i);
+        }
+        
+        return res;
+    }
+}
