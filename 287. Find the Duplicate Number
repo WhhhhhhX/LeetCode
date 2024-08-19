@@ -1,0 +1,69 @@
+Given an array of integers nums containing n + 1 integers where each integer is in the range [1, n] inclusive.
+
+There is only one repeated number in nums, return this repeated number.
+
+You must solve the problem without modifying the array nums and uses only constant extra space.
+
+ 
+
+Example 1:
+
+Input: nums = [1,3,4,2,2]
+Output: 2
+
+
+//这个题本质是一个linkedlist找cycle的问题，可以把题目抽象成一个linkedlist，然后array每个index对应的value当作指向的下一个array的index，这样我们会发现重复元素的位置会被两个其他的value指向，所以此时就有一个环，
+//我们需要找到这个环的start point就是答案。
+
+//Two Pointer solution with Floyd's Tortoise and Hare algorithm
+//两个phase： 
+Phase 1 (Cycle Detection):
+Move the tortoise and hare, advancing the hare twice as fast as the tortoise, until the hare catches up with the tortoise or a cycle is detected. If a cycle is detected, 
+reset the tortoise and move the hare back to its position before the reset.
+
+Phase 2 (Cycle Start Detection):
+Move the tortoise and hare one step at a time until they match again. The position where they match again is the starting point of the cycle, corresponding to the duplicate element.
+
+//tc: O(n) sc:O(1)
+class Solution {
+    public int findDuplicate(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int slow = nums[0];
+        int fast = nums[0];
+
+        //phase 1
+        do {
+            slow = nums[slow];
+            fast = nums[nums[fast]];
+        } while (slow != fast);
+
+        //phase 2
+        slow = nums[0];
+        while (slow != fast) {
+            slow = nums[slow];
+            fast = nums[fast];
+        }
+        return slow;
+    }
+}
+
+//TC AND SC; O(N) not good
+class Solution {
+    public int findDuplicate(int[] nums) {
+        int n = nums.length;
+        int[] temp = new int[n + 1];
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        for (int num : nums) {
+            if (temp[num] != 0) {
+                return num;
+            }
+            temp[num] = 1;
+        }
+        return 0;
+    }
+}
+
