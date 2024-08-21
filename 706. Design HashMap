@@ -1,0 +1,82 @@
+Design a HashMap without using any built-in hash table libraries.
+
+Implement the MyHashMap class:
+
+MyHashMap() initializes the object with an empty map.
+void put(int key, int value) inserts a (key, value) pair into the HashMap. If the key already exists in the map, update the corresponding value.
+int get(int key) returns the value to which the specified key is mapped, or -1 if this map contains no mapping for the key.
+void remove(key) removes the key and its corresponding value if the map contains the mapping for the key.
+
+
+
+class MyHashMap {
+    class Node {
+        int key;
+        int value;
+        Node next;
+
+        public Node(int key, int value) {
+            this.key = key;
+            this.value = value;
+            this.next = null;
+        }
+    }
+    private int size;
+    private Node[] map;
+    public MyHashMap() {
+        size = 1000;
+        map = new Node[size];
+        for (int i = 0; i < size; i++) {
+            map[i] = new Node(-1, -1);
+        }
+    }
+    
+    public void put(int key, int value) {
+        int index = hash(key);
+        Node cur = map[index];
+        while (cur.next != null) {
+            if (cur.next.key == key) {
+                cur.next.value = value;
+                return;
+            }
+            cur = cur.next;
+        }
+        cur.next = new Node(key, value);
+    }
+    
+    public int get(int key) {
+        int index = hash(key);
+        Node cur = map[index];
+        while (cur.next != null) {
+            if (cur.next.key == key) {
+                return cur.next.value;
+            }
+            cur = cur.next;
+        }
+        return -1;
+    }
+    
+    public void remove(int key) {
+        int index = hash(key);
+        Node cur = map[index];
+        while (cur.next != null) {
+            if (cur.next.key == key) {
+                cur.next = cur.next.next;
+                return;
+            }
+            cur = cur.next;
+        }
+    }
+    
+    public int hash(int key) {
+        return key % size;
+    }
+}
+
+/**
+ * Your MyHashMap object will be instantiated and called as such:
+ * MyHashMap obj = new MyHashMap();
+ * obj.put(key,value);
+ * int param_2 = obj.get(key);
+ * obj.remove(key);
+ */
