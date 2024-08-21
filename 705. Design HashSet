@@ -1,0 +1,64 @@
+Design a HashSet without using any built-in hash table libraries.
+
+Implement MyHashSet class:
+
+void add(key) Inserts the value key
+bool contains(key) Returns whether the value key
+void remove(key) Removes the value key in the HashSet. If key does not exist in the HashSet, do nothing.
+ 
+
+Example 1:
+
+Input
+["MyHashSet", "add", "add", "contains", "contains", "add", "contains", "remove", "contains"]
+[[], [1], [2], [1], [3], [2], [2], [2], [2]]
+Output
+[null, null, null, true, false, null, true, null, false]
+
+
+//   用chaining的方法去解决collision的问题，并用hash去找index
+
+class MyHashSet {
+    private int size;
+    private List<List<Integer>> buckets;
+
+    public MyHashSet() {
+        size = 1000;
+        buckets = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            buckets.add(new LinkedList<>());
+        }    
+    }
+    
+    public void add(int key) {
+        int index = hash(key);
+        List<Integer> bucket = buckets.get(index);
+        if (!bucket.contains(key)) {
+            bucket.add(key);
+        }
+    }
+    
+    public void remove(int key) {
+        int index = hash(key);
+        List<Integer> bucket = buckets.get(index);
+        bucket.remove(Integer.valueOf(key));
+    }
+    
+    public boolean contains(int key) {
+        int index = hash(key);
+        List<Integer> bucket = buckets.get(index);
+        return bucket.contains(key);
+    }
+    
+    public int hash(int key) {
+        return key % size;
+    }
+}
+
+/**
+ * Your MyHashSet object will be instantiated and called as such:
+ * MyHashSet obj = new MyHashSet();
+ * obj.add(key);
+ * obj.remove(key);
+ * boolean param_3 = obj.contains(key);
+ */
