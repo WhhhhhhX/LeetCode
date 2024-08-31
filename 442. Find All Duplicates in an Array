@@ -1,0 +1,32 @@
+Given an integer array nums of length n where all the integers of nums are in the range [1, n] and each integer appears once or twice, return an array of all the integers that appears twice.
+
+You must write an algorithm that runs in O(n) time and uses only constant auxiliary space, excluding the space needed to store the output
+
+ 
+
+Example 1:
+
+Input: nums = [4,3,2,7,8,2,3,1]
+Output: [2,3]
+
+
+//如果不要求O(1)space,可以用array进行存储出现的次数，然后即可得出答案
+//如果o(1)space，因为range 是从1 到n，那么可以想各减去1就是0到n - 1，这个可以作为array的index。那我们只需要在这个array上进行一些操作使其代表之前遇到过即可。//line 27
+
+//
+class Solution {
+    public List<Integer> findDuplicates(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return null;
+        }
+        List<Integer> res = new LinkedList<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[Math.abs(nums[i]) - 1] < 0) {
+                res.add(Math.abs(nums[i]));
+            } else {
+                nums[Math.abs(nums[i]) - 1] *= -1;
+            }
+        }
+        return res;
+    }
+}
