@@ -1,0 +1,62 @@
+Given an array nums of size n, return the majority element.
+
+The majority element is the element that appears more than ⌊n / 2⌋ times. You may assume that the majority element always exists in the array.
+
+ 
+
+Example 1:
+
+Input: nums = [3,2,3]
+Output: 3
+
+
+//TC&SC: O(N)
+class Solution {
+    public int majorityElement(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            map.put(nums[i], map.getOrDefault(nums[i], 0) + 1);
+        }
+        
+        int majorityElement = 0;
+        int maxCount = 0;
+
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+           if (entry.getValue() > maxCount) {
+                majorityElement = entry.getKey();
+                maxCount = entry.getValue();
+            }
+        }
+        return majorityElement;
+    }
+}
+
+//tc: o(n) sc: O(1)
+//Moore Voting Algorithm
+//注意到题目说 最多的元素一定是比总数量的一半好要多的，所以根据这点特性，我们可以用一个count去计算，如果相等，就++，否则就--，如果count减到0就代表此时的这个num肯定不是答案，
+//因为答案数量肯定是比一半要多的，which means count肯定不会减少到0，也就意味着我们现在需要开始计算下一个数字出现的count了。
+
+
+class Solution {
+    public int majorityElement(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int count = 0;
+        int res = 0;
+        for (int num : nums) {
+            if (count == 0) {
+                res = num;
+            }
+            if (num != res) {
+                count--;
+            } else {
+                count++;
+            }
+        }
+        return res;
+    }
+}
