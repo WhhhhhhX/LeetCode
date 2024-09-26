@@ -1,0 +1,41 @@
+Given the root of a Binary Search Tree (BST), return the minimum absolute difference between the values of any two different nodes in the tree.
+
+//心得：既然是bst，就往in order traverse上想，因为in order 出来是顺序递增的，那么每两个node之间的差值一定是小的，然后从众多差值中找最小即可。
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    private int res = Integer.MAX_VALUE;
+    private Integer prev = null;
+    public int getMinimumDifference(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        helper(root);
+        return res;
+    }
+    private void helper(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        helper(root.left);
+        if (prev != null) {
+            res = Math.min(Math.abs(prev - root.val), res);
+        }
+        prev = root.val;
+        helper(root.right);
+    }
+}
