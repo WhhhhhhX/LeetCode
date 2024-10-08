@@ -1,0 +1,51 @@
+A gene string can be represented by an 8-character long string, with choices from 'A', 'C', 'G', and 'T'.
+
+Suppose we need to investigate a mutation from a gene string startGene to a gene string endGene where one mutation is defined as one single character changed in the gene string.
+
+For example, "AACCGGTT" --> "AACCGGTA" is one mutation.
+There is also a gene bank bank that records all the valid gene mutations. A gene must be in bank to make it a valid gene string.
+
+Given the two gene strings startGene and endGene and the gene bank bank, return the minimum number of mutations needed to mutate from startGene to endGene. If there is no such a mutation, return -1.
+
+Note that the starting point is assumed to be valid, so it might not be included in the bank.
+
+
+class Solution {
+    public int minMutation(String startGene, String endGene, String[] bank) {
+        Set<String> bankSet = new HashSet<>();
+        for (String s : bank) {
+            bankSet.add(s);
+        }
+        if (!bankSet.contains(endGene)) {
+            return -1;
+        }
+        int[] res = new int[]{Integer.MAX_VALUE};
+        Set<String> visited = new HashSet<>();
+        char[] choice = new char[]{'A', 'C', 'G', 'T'};
+        helper(res, startGene, endGene, visited, bankSet, choice, 0);
+        return res[0] == Integer.MAX_VALUE ? -1 : res[0];
+    }
+    private void helper(int[] res, String start, String end, Set<String> visited, Set<String> bankSet, char[] choice, int step) {
+        if (start.equals(end)) {
+            res[0] = Math.min(res[0], step);
+            return;
+        }
+
+        for (int i = 0; i < 8; i++) {
+            StringBuilder sb = new StringBuilder(start);
+            char c = start.charAt(i);
+            for (char cho : choice) {
+                if (cho == c) {
+                    continue;
+                }
+                sb.setCharAt(i, cho);
+                String next = sb.toString();
+                if (bankSet.contains(next) && !visited.contains(next)) {
+                    visited.add(next);
+                    helper(res, next, end, visited, bankSet, choice, step + 1);
+                    visited.remove(next);
+                }
+            }
+        }
+    }
+}
